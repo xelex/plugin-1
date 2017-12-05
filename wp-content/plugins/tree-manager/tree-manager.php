@@ -235,11 +235,10 @@ END;
         foreach(range(1, 1000) as $index) {
             $lat_base = 52.595231 + (rand(0, 10000) - 5000) * 0.2 / 10000;
             $lng_base = 104.930529 + (rand(0, 10000) - 5000) * 0.2 / 10000;
-            $action_id = range(1, 10);
-
+            $type_id = rand(1, 30);
             $url = 'type_'.$index;
-            $action = rand(1, 10);
-            $sql = "INSERT INTO ".$wpdb->prefix."trees (lat, lng, action_id, owner_id, type_id, url) values ($lat_base, $lng_base, $action, 0, 1, '$url')";
+            $action_id = rand(1, 10);
+            $sql = "INSERT INTO ".$wpdb->prefix."trees (lat, lng, action_id, owner_id, type_id, url) values ($lat_base, $lng_base, $action_id, 0, $type_id, '$url')";
             dbDelta( $sql );
         }
     }

@@ -30,7 +30,7 @@ function ac_get_type_trees_count( $id ) {
     global $wpdb;
     if (is_array($id)) {
         return $wpdb->get_results(
-            "SELECT count(*) as count, action_id FROM {$wpdb->prefix}trees WHERE type_id in (".implode(', ', $id).") group by type_id"
+            "SELECT count(*) as count, type_id FROM {$wpdb->prefix}trees WHERE type_id in (".implode(', ', $id).") group by type_id"
         );
     }
     return $wpdb->get_row( $wpdb->prepare( "SELECT count(*) as count FROM {$wpdb->prefix}trees WHERE type_id = %d", $id ) );
@@ -105,10 +105,24 @@ function ac_get_types( $args = null ) {
 
     if ( $args['count'] ) {
         $result = $wpdb->get_var( $sql );
+        return $result;
     } else {
         $result = $wpdb->get_results( $sql);
     }
 
+    $all_types = array_map(function($v){return $v->id;}, $result);
+    $counters = array_reduce(
+        ac_get_type_trees_count($all_types),
+        function(&$result, $item){
+            $result[$item->type_id] = $item->count;
+            return $result;
+        },
+        array());
+
+    # Apply hooks
+    foreach($result as $type) {
+        $type->{'planted'} = $counters[$type->id];
+    }
     return $result;
 }
 

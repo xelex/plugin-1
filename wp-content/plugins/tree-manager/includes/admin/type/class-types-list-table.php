@@ -43,9 +43,8 @@ class Types_List_Table extends WP_List_Table {
             case 'name':
             case 'icon':
             case 'description':
-                return $item->{$column_name};
             case 'planted':
-                return "0";
+                return $item->{$column_name};
             default:
                 return print_r( $item, true );
         }
@@ -85,6 +84,7 @@ class Types_List_Table extends WP_List_Table {
 
         $actions = [
             'edit'   => sprintf( '<a href="?page=%s&action=%s&id=%d">Редактировать</a>',  esc_attr( $_REQUEST['page'] ), 'edit', absint( $item->id ) ),
+            'map'   => sprintf( '<a href="?page=%s&action=%s&id=%d">Карта посадок</a>',  esc_attr( $_REQUEST['page'] ), 'map', absint( $item->id ) ),
             'delete' => sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce )
         ];
 
@@ -117,7 +117,7 @@ class Types_List_Table extends WP_List_Table {
         $sortable_columns = array(
             'name' => array( 'name', true ),
             'icon' => array( 'icon', true ),
-            'planted' => array( 'planted', true ),
+#            'planted' => array( 'planted', true ),
             'description' => array( 'description', true ),
         );
 
