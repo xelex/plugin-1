@@ -1,0 +1,34 @@
+.column-icon {
+    width: 100px;
+}
+
+.column-planted {
+    width: 150px;    
+}
+
+.column-when {
+    width: 150px;    
+}
+
+.column-date {
+    width: 150px;    
+}
+
+.regular-text {
+    width: 100%;
+}
+
+.geo-text {
+    min-width: 200px;
+    width: 25%;
+}
+
+#geo_editor_map {
+    width: 100%;
+    min-height: 400px;
+}
+
+.view-description {
+    width: 100%;
+    min-height: 300px;
+}

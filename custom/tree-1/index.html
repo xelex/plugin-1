@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- Карта -->
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <!-- Предпросмотр QR-кодов -->
+    <script type="text/javascript" src="lib/qrcanvas.packed.js"></script>
+    <script type='text/javascript' src='https://wordpress.org/news/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+    <script type="text/javascript">
+        var LINK_PREFIX = 'http://япосадилдерево.рф/reg/';
+        var LINK_SHORT = LINK_PREFIX; //'http://япд.рф/';
+
+        var geo_map, geo_point;
+
+        var qr_image = new Image;
+        var qr_canvas;
+
+        ymaps.ready(function(){
+            geo_map = new ymaps.Map("geo_map", {
+                center: [55.76, 37.64],
+                zoom: 9
+            }, {
+                searchControlProvider: 'yandex#search'
+            });
+
+            geo_map.events.add('click', function (e) {
+                var coords = e.get('coords');
+
+                if (geo_point) {
+                    geo_point.geometry.setCoordinates(coords);
+                } else {
+                    geo_point = createPlacemark(coords);
+                    geo_map.geoObjects.add(geo_point);
+                    geo_point.events.add('dragend', function () {
+                        getAddress(geo_point.geometry.getCoordinates());
+                    });
+                }
+                getAddress(coords);
+            });
+
+            function createPlacemark(coords) {
+                return new ymaps.Placemark(coords, {
+                    iconCaption: 'поиск...'
+                }, {
+                    preset: 'islands#violetDotIconWithCaption',
+                    draggable: true
+                }); 
+            }
+
+            function getAddress(coords) {
+                jQuery("#geo_lat").val(coords[0]);
+                jQuery("#geo_lng").val(coords[1]);
+                geo_enabled.checked = 1;
+                geo_point.properties.set('iconCaption', 'поиск...');
+                ymaps.geocode(coords).then(function (res) {
+                    var firstGeoObject = res.geoObjects.get(0);
+
+                    geo_point.properties
+                        .set({
+                            iconCaption: [
+                                firstGeoObject.getLocalities().length ? firstGeoObject.getLocalities() : firstGeoObject.getAdministrativeAreas(),
+                                firstGeoObject.getThoroughfare() || firstGeoObject.getPremise()
+                            ].filter(Boolean).join(', '),
+                            balloonContent: firstGeoObject.getAddressLine()
+                        });
+                });
+            }
+
+            initPreview();
+        });
+
+        function initPreview() {
+            var PIXEL_RATIO = (function () {
+                var ctx = document.getElementById("qr_preview").getContext("2d"),
+                    dpr = window.devicePixelRatio || 1,
+                    bsr = ctx.webkitBackingStorePixelRatio ||
+                        ctx.mozBackingStorePixelRatio ||
+                        ctx.msBackingStorePixelRatio ||
+                        ctx.oBackingStorePixelRatio ||
+                        ctx.backingStorePixelRatio || 1;
+
+                return dpr / bsr;
+            })();
+
+            qr_canvas = document.getElementById("qr_preview");
+
+            var w = 400, h = 400;
+            qr_canvas.width = w * PIXEL_RATIO;
+            qr_canvas.height = h * PIXEL_RATIO;
+            qr_canvas.style.width = w + "px";
+            qr_canvas.style.height = h + "px";
+            qr_canvas.getContext("2d").setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0);
+
+            qr_image.onload = function() {
+                drawPreview();
+            }
+
+            updateLink();
+        }
+
+        function updateLink() {
+            var tmp = LINK_PREFIX + global_id.value + "-" + count.value;
+            var enc = encodeLink(global_id.value, count.value);
+            jQuery("#link_raw").val(tmp);
+            jQuery("#link_enc").val(enc);
+            jQuery("#link_dec").val(decodeLink(enc));
+
+            qr_image.src="qr.php?url=$enc&preview=1?tmp="+new Date().getTime();
+        }
+
+        function drawPreview() {
+            var ctx = qr_canvas.getContext("2d");
+            ctx.clearRect(0, 0, qr_canvas.width, qr_canvas.height);
+            ctx.drawImage(qr_image, 0, 0, 400, 400);
+            ctx.tillText()
+        }
+
+        function encodeLink(v1, v2) {
+            return LINK_SHORT + new Number(v1).toString(32) +"-"+ new Number(v2).toString(32);
+        }
+
+        function decodeLink(encoded) {
+            var tmp = encoded.replace(LINK_SHORT).split('-')
+            return LINK_PREFIX + Number.parseInt(tmp[0], 32) +"-"+ Number.parseInt(tmp[1], 32);
+        }
+
+    </script>
+    <title>Title of the document</title>
+</head>
+    <h1>Генератор QR-кодов для мероприятий</h1>
+    <div style="display: table;">
+    <div style="border: 1px solid black; width: 900px; display: table-cell; padding: 10px;">
+        <form action="#">
+            <h2>ID акции (берется из БД)</h2>
+            <p>
+                <input type="number" id='global_id' name="id" readonly=1 placeholder="ID имя акции" value="100500" />
+            </p>
+
+            <h2>Название акции (его сохранять в БД)</h2>
+            <p>
+                <input type="text" name="title" placeholder="Введите имя акции" value="Тестовая акция" />
+            </p>
+            
+            <h2>Количество QR-кодов (его сохранять в БД, от 1 до 1000)</h2>
+            <p>
+                <input type="number" name="count" id="count" min=1 max=1000 onchange="updateLink()"  placeholder="Введите количество" value="1" />
+            </p>
+
+            <h2>Допустимые породы дерева (забрать список из БД и сохранять выбор в БД для акции)</h2>
+            <p>
+                <select name="species" style="width: 300px;">
+                    <option value="" selected=1></option>
+                    <option value="1">Пихта</option>
+                    <option value="2">Ель</option>
+                    <option value="3">Сосна</option>
+                    <option value="4">Осина</option>
+                    <option value="5">Клен</option>
+                    <option value="6">Дуб</option>
+                </select>
+            </p>
+
+            <h2>Дата акции (сохранять в БД)</h2>
+            <p>
+                <label for="date">Дата акции</label>
+                <input type="date" name="date" value="" />
+            </p>
+
+            <h2>Фиксированное GEO-положение (его сохранять в БД)</h2>
+            <p>
+                <input type="text" id="geo_lat" readonly=1 name="geo_lat" value="" />
+                <input type="text" id="geo_lng" readonly=1 name="geo_lng" value="" />
+                <div id="geo_map" style="width:800px; height:400px"></div>
+            </p>
+
+            <h2>Текст (сохранять в БД)</h2>
+            <p>
+                Включить:
+                <input type="checkbox" name="text_enabled" id="text_enabled" checked=1>
+                <br/>
+                <textarea name="text" id="text" placeholder="Введите текст для генерации" cols="120" rows="30">Это наш текст по умолчанию</textarea>
+            </p>
+        </form>
+    </div>
+
+    <div style="border: 1px solid black; width: 850px; display: table-cell; padding: 10px;">
+        <h2>Предпросмотр (последний элемент)</h2>
+        <p>
+            <label for="link_raw">Оригинальная ссылка</label>
+            <input type="text" id="link_raw" name="link_raw" readonly="true" value="" style="width: 500px">
+        </p>
+        <p>
+            <label for="link_raw">Закодированная ссылка</label>
+            <input type="text" id="link_enc" name="link_enc" readonly="true" value="" style="width: 500px">
+        </p>
+        <p>
+            <label for="link_raw">Раскодированная ссылка</label>
+            <input type="text" id="link_dec" name="link_dec" readonly="true" value="" style="width: 500px">
+        </p>
+        <p>
+            <button id="generate">Генерировать файлы</button>
+        </p>
+        <canvas id="qr_preview" style="width: 400px; height: 400px;"></canvas>
+    </div>
+    </div>
+</body>
+</html>
