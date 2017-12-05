@@ -29,7 +29,8 @@ function url_simplify($path) {
 
 function encode_qr_url($id, $num) {
     //TODO: make it configurable
-    $LINK_PREFIX = 'http://япосадилдерево.рф/reg';
+   $LINK_PREFIX = 'http://япосадилдерево.рф/reg';
+    //$LINK_PREFIX = 'http://япд.рф/';
     $suffix = base_convert($id, 10, 36).'-'.base_convert($num, 10, 36);
     return $LINK_PREFIX.'?'.$suffix;
 }

@@ -1,10 +1,8 @@
 <?php 
-    define('ABSPATH', 1);
-    require dirname( __FILE__ ) . '/phpqrcode.php';
-    require dirname( __FILE__ ) . '/../../helper-functions.php';
+    include dirname( __FILE__ ) . '/phpqrcode.php';
 
     function generate_qr_image($url) {
-        $f2 = dirname( __FILE__) . '/../../../img/background.png';
+        $f2 = 'img/background.png';
 
         $center_x = 366 + 133;
         $center_y = 410 + 133;
@@ -59,17 +57,18 @@
         return imagepng($merged_image);
     }
 
+    $url = $_REQUEST['url'];
+    $preview = $_REQUEST['preview'];
+    $pdf = $_REQUEST['pdf'];
+
     $we_need_x = 0;
     $we_need_y = 0;
 
-    if ($_REQUEST['id']) {
-        if ($_REQUEST['preview']) {
+    if ($url) {
+        if ($preview) {
             // single page
-            $url = encode_qr_url($_REQUEST['id'], 1);
             header('Content-Type: image/png');
             print(generate_qr_image($url));
-            //print($url);
-            exit();
         } else {
             // many pages
         }

@@ -28,7 +28,11 @@ function ag_get_type_icon( $icon_id = -1 ) {
  */
 function ac_get_type_trees_count( $id ) {
     global $wpdb;
-
+    if (is_array($id)) {
+        return $wpdb->get_results(
+            "SELECT count(*) as count, action_id FROM {$wpdb->prefix}trees WHERE type_id in (".implode(', ', $id).") group by type_id"
+        );
+    }
     return $wpdb->get_row( $wpdb->prepare( "SELECT count(*) as count FROM {$wpdb->prefix}trees WHERE type_id = %d", $id ) );
 }
 

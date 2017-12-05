@@ -3,8 +3,7 @@ $item = ac_get_activity( $id );
 
 $enc = encode_qr_url($id, 1);
 
-$page_url = menu_page_url( 'tree-manager', false );
-$qr_gen_url = add_query_arg( array( 'action' => 'qrgen', 'preview' => 1, 'id' => $id, 'seed' => time() ), $page_url );
+$qr_gen_url = url_simplify(plugin_dir_url( __FILE__).'/activity-qrgen.php?preview=1&id='.$id);
 ?>
 <script type="text/javascript">
     var qr_canvas, qr_image = new Image;
@@ -77,7 +76,7 @@ $qr_gen_url = add_query_arg( array( 'action' => 'qrgen', 'preview' => 1, 'id' =>
                         <b><?php _e( 'Предпросмотр', 'vbh' ); ?></b>
                     </th>
                     <td>
-                        <canvas id="qr_preview" style="width: 400px; height: 400px; background: yellow;"></canvas>
+                        <canvas id="qr_preview" style="width: 400px; height: 400px;"></canvas>
                     </td>
                 </tr>
                 <tr class="row-count">
