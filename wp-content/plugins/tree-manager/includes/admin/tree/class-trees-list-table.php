@@ -40,16 +40,28 @@ class Trees_List_Table extends WP_List_Table {
      */
     public function column_default( $item, $column_name ) {
         switch ( $column_name ) {
+            case 'id':
             case 'lat':
             case 'lng':
-            case 'approved':
-            case 'action_id':
             case 'owner_id':
-            case 'type_id':
             case 'url':
             case 'planted':
             case 'last':
                 return $item->{$column_name};
+            case 'action_id':
+                return sprintf(
+                    '<a href="?page=%s&action=%s&id=%d">'.($item->action_name ?: $item->action_id).'</a>',
+                    'tree-manager',
+                    'view',
+                    absint( $item->action_id ));
+            case 'type_id':
+                return sprintf(
+                    '<a href="?page=%s&action=%s&id=%d">'.($item->type_name ?: $item->type_id).'</a>',
+                    'tree-manager-type',
+                    'view',
+                    absint( $item->type_id ));
+            case 'approved':
+                return $item->{$column_name} ? 'Да' : 'Нет';
             default:
                 return print_r( $item, true );
         }
@@ -75,16 +87,17 @@ class Trees_List_Table extends WP_List_Table {
      *
      * @return string
      */
-    function column_name( $item ) {
+    function column_id( $item ) {
         $delete_nonce = wp_create_nonce( 'ac_delete_tree' );
 
-        $title = '<strong>' . $item->name . '</strong>';
+        $title = '<strong>' . $item->id . '</strong>';
 
-        $actions = [
-            'edit'   => sprintf( '<a href="?page=%s&action=%s&id=%d">Редактировать</a>',  esc_attr( $_REQUEST['page'] ), 'edit', absint( $item->id ) ),
-            'delete' => sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce )
-        ];
-
+        $actions = [];
+        $actions['edit'] = sprintf( '<a href="?page=%s&action=%s&id=%d">Редактировать</a>',  esc_attr( $_REQUEST['page'] ), 'edit', absint( $item->id ) );
+        if (intval($item->approved) != 1) {
+            $actions['approve'] = sprintf( '<a href="?page=%s&action=%s&id=%d">Резрешить</a>',  esc_attr( $_REQUEST['page'] ), 'approve', absint( $item->id ) );
+        }
+        $actions['delete'] = sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce );        
         return sprintf( '<a href="?page=%s&action=%s&id=%d">%s</a>',  esc_attr( $_REQUEST['page'] ), 'view', absint( $item->id ), $title ) . $this->row_actions( $actions );
     }
 
@@ -96,6 +109,7 @@ class Trees_List_Table extends WP_List_Table {
     function get_columns() {
         $columns = [
             'cb' => '<input type="checkbox" />',
+            'id' => __( 'Номер', 'vbh' ),
             'approved' => __( 'Проверен', 'vbh' ),
             'action_id' => __( 'Акция', 'vbh' ),
             'owner_id' => __( 'Посадил', 'vbh' ),
@@ -117,6 +131,7 @@ class Trees_List_Table extends WP_List_Table {
      */
     public function get_sortable_columns() {
         $sortable_columns = array(
+            'id' => array( 'id', true ),
             'lat' => array( 'lat', true ),
             'lng' => array( 'lng', true ),
             'approved' => array( 'approved', true ),
@@ -139,7 +154,8 @@ class Trees_List_Table extends WP_List_Table {
      */
     public function get_bulk_actions() {
         $actions = [
-            'bulk-delete' => 'Удалить'
+            'bulk-delete' => 'Удалить',
+            'bulk-delete' => 'Резрешить'
         ];
 
         return $actions;
@@ -162,7 +178,7 @@ class Trees_List_Table extends WP_List_Table {
         $current_page = $this->get_pagenum();
         $orderby      = ( ! empty( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'id';
         $order        = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'DESC';
-        $s            = ( ! empty( $_REQUEST['s'] ) ) ? $_REQUEST['s'] : '';
+        $filter       = ( ! empty( $_REQUEST['filter'] ) ) ? $_REQUEST['filter'] : 'all';
         $offset       = ( $current_page - 1 ) * $per_page;
 
         $args = [
@@ -170,8 +186,8 @@ class Trees_List_Table extends WP_List_Table {
             'offset'  => $offset,
             'orderby' => $orderby,
             'order'   => $order,
+            'filter'  => $filter,
             'count'   => true,
-            's'       => $s,
         ];
 
         $total_items  = ac_get_trees( $args );
@@ -184,5 +200,24 @@ class Trees_List_Table extends WP_List_Table {
         unset( $args['count'] );
 
         $this->items = ac_get_trees( $args );
+    }
+
+    function get_views() {
+        $views = array();
+        $current = ( !empty($_REQUEST['filter']) ? $_REQUEST['filter'] : 'all');
+
+        $class = ($current == 'all' ? ' class="current"' :'');
+        $all_url = remove_query_arg('filter');
+        $views['all'] = "<a href='{$all_url }' {$class} >Все</a>";
+
+        $url = add_query_arg('filter', 'unapproved');
+        $class = ($current == 'unapproved' ? ' class="current"' :'');
+        $views['foo'] = "<a href='{$url}' {$class} >Непроверенные</a>";
+
+        $url = add_query_arg('filter', 'approved');
+        $class = ($current == 'approved' ? ' class="current"' :'');
+        $views['bar'] = "<a href='{$url}' {$class} >Проверенные</a>";
+
+        return $views;
     }
 }

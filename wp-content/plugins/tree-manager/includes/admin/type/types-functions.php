@@ -63,6 +63,17 @@ function ac_get_type( $id = 0 ) {
 }
 
 /**
+ * Get all types as a map
+ *
+ * @return map
+ */
+function ac_get_types_map() {
+    global $wpdb;
+    
+    return $wpdb->get_results(" SELECT id, name FROM {$wpdb->prefix}types");
+}
+
+/**
  * Retrieve types data from the database.
  *
  * @param int $per_page
@@ -79,6 +90,7 @@ function ac_get_types( $args = null ) {
         'orderby' => 'id',
         'order'   => 'DESC',
         'count'   => false,
+        'hooks'   => true
     ];
 
     $args = wp_parse_args( $args, $defaults );
@@ -110,18 +122,20 @@ function ac_get_types( $args = null ) {
         $result = $wpdb->get_results( $sql);
     }
 
-    $all_types = array_map(function($v){return $v->id;}, $result);
-    $counters = array_reduce(
-        ac_get_type_trees_count($all_types),
-        function(&$result, $item){
-            $result[$item->type_id] = $item->count;
-            return $result;
-        },
-        array());
-
     # Apply hooks
-    foreach($result as $type) {
-        $type->{'planted'} = $counters[$type->id];
+    if ($args['hooks']) {
+        $all_types = array_map(function($v){return $v->id;}, $result);
+        $counters = array_reduce(
+            ac_get_type_trees_count($all_types),
+            function(&$result, $item){
+                $result[$item->type_id] = $item->count;
+                return $result;
+            },
+            array());
+
+        foreach($result as $type) {
+            $type->{'planted'} = $counters[$type->id];
+        }
     }
     return $result;
 }

@@ -30,7 +30,9 @@ function ac_get_trees( $args = null ) {
         'offset'  => 0,
         'orderby' => 'id',
         'order'   => 'DESC',
+        'filter'  => 'all',
         'count'   => false,
+        'hooks'   => true
     ];
 
     $args = wp_parse_args( $args, $defaults );
@@ -41,8 +43,26 @@ function ac_get_trees( $args = null ) {
         $sql = "SELECT * FROM {$wpdb->prefix}trees";
     }
 
-    if ( ! empty( $args['s'] ) ) {
-        $sql .= ' WHERE name LIKE "%' . esc_sql( $args['s'] ) . '%"' ;
+    $filters = array();
+    if (! empty( $args['s'] ) ) {
+        array_push($filters, ' name LIKE "%' . esc_sql( $args['s'] ) . '%" ');
+    }
+
+    if (! empty( $args['filter'] ) ) {
+        switch($args['filter']) {
+            case 'unapproved':
+                array_push($filters, ' approved = 0 ');
+                break;
+            case 'approved':
+                array_push($filters, ' NOT approved = 0 ');
+                break;
+            case 'all':
+            default:
+        }
+    }
+
+    if (count($filters) > 0) { 
+        $sql .= ' WHERE '.implode(' AND ', $filters);
     }
 
     if ( ! empty( $args['orderby'] ) ) {
@@ -56,9 +76,33 @@ function ac_get_trees( $args = null ) {
     }
 
     if ( $args['count'] ) {
-        $result = $wpdb->get_var( $sql );
+        return $wpdb->get_var( $sql );
     } else {
         $result = $wpdb->get_results( $sql);
+    }
+
+    # Apply hooks
+    if ($args['hooks']) {
+        $all_activities = array_reduce(
+            ac_get_activities_map(),
+            function(&$r, $item){
+                $r[$item->id] = $item->name;
+                return $r;
+            },
+            array());
+
+        $all_types = array_reduce(
+            ac_get_types_map(),
+            function(&$r, $item){
+                $r[$item->id] = $item->name;
+                return $r;
+            },
+            array());
+
+        foreach($result as $tree) {
+            $tree->{'action_name'} = $all_activities[$tree->action_id];
+            $tree->{'type_name'} = $all_types[$tree->type_id];
+        }
     }
 
     return $result;
@@ -92,15 +136,14 @@ function ac_insert_tree( $args = array() ) {
     $defaults = array(
         'id' => null,
         'lat' => '',
-'lng' => '',
-'approved' => '',
-'action_id' => '',
-'owner_id' => '',
-'type_id' => '',
-'url' => '',
-'planted' => '',
-'last' => '',
-
+        'lng' => '',
+        'approved' => '',
+        'action_id' => '',
+        'owner_id' => '',
+        'type_id' => '',
+        'url' => '',
+        'planted' => '',
+        'last' => ''
     );
 
     $args       = wp_parse_args( $args, $defaults );

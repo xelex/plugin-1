@@ -37,6 +37,17 @@ function ac_get_activity_trees_count( $id ) {
 }
 
 /**
+ * Get all activities as a map
+ *
+ * @return map
+ */
+function ac_get_activities_map() {
+    global $wpdb;
+    
+    return $wpdb->get_results(" SELECT id, name FROM {$wpdb->prefix}activities");
+}
+
+/**
  * Retrieve activities data from the database.
  *
  * @param int $per_page
@@ -53,6 +64,7 @@ function ac_get_activities( $args = null ) {
         'orderby' => 'id',
         'order'   => 'DESC',
         'count'   => false,
+        'hooks'   => true
     ];
 
     $args = wp_parse_args( $args, $defaults );
@@ -83,19 +95,21 @@ function ac_get_activities( $args = null ) {
     }
     $result = $wpdb->get_results( $sql);
 
-    $all_ativities = array_map(function($v){return $v->id;}, $result);
-    $counters = array_reduce(
-        ac_get_activity_trees_count($all_ativities),
-        function(&$result, $item){
-            $result[$item->action_id] = $item->count;
-            return $result;
-        },
-        array());
-
     # Apply hooks
-    foreach($result as $act) {
-        $act->{'planted'} = $counters[$act->id];
-        $act->{'when'} = explode(' ', $act->when)[0];
+    if ($args['hooks']) {
+        $all_ativities = array_map(function($v){return $v->id;}, $result);
+        $counters = array_reduce(
+            ac_get_activity_trees_count($all_ativities),
+            function(&$result, $item){
+                $result[$item->action_id] = $item->count;
+                return $result;
+            },
+            array());
+
+        foreach($result as $act) {
+            $act->{'planted'} = $counters[$act->id];
+            $act->{'when'} = explode(' ', $act->when)[0];
+        }
     }
 
     return $result;

@@ -3,7 +3,6 @@ $item = ac_get_type( $id );
 $count_tree = ac_get_type_trees_count( $id );
 $count_act = ac_get_type_activities_count( $id );
 ?>
-
 <div class="wrap">
     <h1><?php _e( 'Просмотр породы', 'vbh' ); ?></h1>
     <table class="form-table">

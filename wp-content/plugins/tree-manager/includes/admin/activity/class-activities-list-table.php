@@ -48,7 +48,6 @@ class Activities_List_Table extends WP_List_Table {
             case 'when':
             case 'location':
             case 'description':
-            case 'planted':
                 return $item->{$column_name};
             default:
                 return print_r( $item, true );
@@ -60,6 +59,13 @@ class Activities_List_Table extends WP_List_Table {
      */
     public function column_when($item) {
         return explode(" ", $item->when)[0];
+    }
+
+    /**
+     * Renderer for planted cells
+     */
+    public function column_planted($item) {
+        return sprintf( '<a href="?page=%s&filter=%s&filter_id=%d">'.($item->planted).'</a>',  'tree-manager-trees', 'action', absint( $item->id ));
     }
 
     /**
@@ -90,7 +96,7 @@ class Activities_List_Table extends WP_List_Table {
         $actions = [
             'edit'   => sprintf( '<a href="?page=%s&action=%s&id=%d">Редактировать</a>',  esc_attr( $_REQUEST['page'] ), 'edit', absint( $item->id ) ),
             'qr'   => sprintf( '<a href="?page=%s&action=%s&id=%d">QR-код</a>',  esc_attr( $_REQUEST['page'] ), 'qr', absint( $item->id ) ),
-            'map'   => sprintf( '<a href="?page=%s&action=%s&id=%d">Карта посадок</a>',  esc_attr( $_REQUEST['page'] ), 'map', absint( $item->id ) ),
+            'map'   => sprintf( '<a href="?page=%s&action=%s&filter=activity&filter_id=%d">Карта посадок</a>',  'tree-manager-trees', 'view', absint( $item->id ) ),
             'delete' => sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce )
         ];
 

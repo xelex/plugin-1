@@ -41,9 +41,7 @@ class Types_List_Table extends WP_List_Table {
     public function column_default( $item, $column_name ) {
         switch ( $column_name ) {
             case 'name':
-            case 'icon':
             case 'description':
-            case 'planted':
                 return $item->{$column_name};
             default:
                 return print_r( $item, true );
@@ -53,9 +51,16 @@ class Types_List_Table extends WP_List_Table {
     /**
      * Renderer for icon cells
      */
-     public function column_icon($item) {
+    public function column_icon($item) {
          return '<img heigth=40 width=40 alt="'.$item->icon.'"src="'.ag_get_type_icon($item->icon).'" />';
-     }
+    }
+
+    /**
+     * Renderer for planted cells
+     */
+    public function column_planted($item) {
+        return sprintf( '<a href="?page=%s&filter=%s&filter_id=%d">'.($item->planted).'</a>',  'tree-manager-trees', 'type', absint( $item->id ));
+    }
 
     /**
      * Render the bulk edit checkbox.
@@ -84,7 +89,7 @@ class Types_List_Table extends WP_List_Table {
 
         $actions = [
             'edit'   => sprintf( '<a href="?page=%s&action=%s&id=%d">Редактировать</a>',  esc_attr( $_REQUEST['page'] ), 'edit', absint( $item->id ) ),
-            'map'   => sprintf( '<a href="?page=%s&action=%s&id=%d">Карта посадок</a>',  esc_attr( $_REQUEST['page'] ), 'map', absint( $item->id ) ),
+            'map'   => sprintf( '<a href="?page=%s&action=%s&filter=type&filter_id=%d">Карта посадок</a>',  'tree-manager-trees', 'view', absint( $item->id ) ),
             'delete' => sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce )
         ];
 
