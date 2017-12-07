@@ -1,6 +1,19 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+function ag_get_type_icon( $icon_id = -1 ) {
+    $result = $tmp.'all_30.png';
+
+    $tmp = plugin_dir_url( __FILE__).'/../img/';
+    if ($icon_id == 0 or $icon_id == 1) {
+        $result = $tmp.'icon_'.$icon_id.'.svg';
+    } else {
+        $result = $tmp.'cluster.svg';
+    }
+
+    return url_simplify($result);
+}
+
 function url_simplify($path) {
     $prefix = '';
     if (strpos($path, 'http://') !== false) {
@@ -41,6 +54,7 @@ function ac_types_selector($selected = false) {
         'number'  => -1,
         'offset'  => 0,
         'orderby' => 'icon',
+        'hoos'    => false,
         's'       => $s
     ];
 
@@ -68,5 +82,27 @@ function ac_types_selector($selected = false) {
         }
     }
     $result = $result."</optgroup>";
+    return $result;
+}
+
+function ac_activities_selector($selected = false) {
+    $args = [
+        'number'  => -1,
+        'offset'  => 0,
+        'orderby' => 'icon',
+        'hooks'    => false,
+        's'       => $s
+    ];
+
+    $types = ac_get_activities_map($args);
+    
+    $result = "";
+    foreach($types as $tmp) {
+        if ($selected === $tmp->id) {
+            $result = $result."<option value=\"".$tmp->id."\" selected=1>".$tmp->name."</option>";
+        } else {
+            $result = $result."<option value=\"".$tmp->id."\">".$tmp->name."</option>";
+        }
+    }
     return $result;
 }

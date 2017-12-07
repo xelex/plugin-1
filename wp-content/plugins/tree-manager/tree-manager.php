@@ -27,8 +27,8 @@ class Tree_Manager {
      * @param mixed
      */
     public function __construct() {
+        require dirname( __FILE__ ) . '/includes/helper-functions.php';
         if ( is_admin() ) {
-            require dirname( __FILE__ ) . '/includes/helper-functions.php';
             require dirname( __FILE__ ) . '/includes/admin/class-admin-menu.php';
             require dirname( __FILE__ ) . '/includes/admin/type/types-functions.php';
             require dirname( __FILE__ ) . '/includes/admin/tree/trees-functions.php';
@@ -36,14 +36,27 @@ class Tree_Manager {
             require dirname( __FILE__ ) . '/includes/admin/plantator/plantators-functions.php';
 
             new Admin_Menu();
-
-            wp_enqueue_script('yandex-map', 'https://api-maps.yandex.ru/2.1/?lang=ru_RU');
-            wp_enqueue_script('yandex-round', url_simplify(plugin_dir_url( __FILE__).'/js/map-round.js'));
-            wp_enqueue_script('qr-canvas', url_simplify(plugin_dir_url( __FILE__).'/js/qrcanvas.packed.js'));
-            wp_enqueue_style( 'style', url_simplify(plugin_dir_url( __FILE__).'/css/tree-manager.css'));
         }
 
+        // MAP-related things
+        wp_enqueue_script('yandex-map', 'https://api-maps.yandex.ru/2.1/?lang=ru_RU');
+        wp_enqueue_script('yandex-round', url_simplify(plugin_dir_url( __FILE__).'/js/map-round.js'));
+        wp_enqueue_script('qr-canvas', url_simplify(plugin_dir_url( __FILE__).'/js/qrcanvas.packed.js'));
+        wp_enqueue_style( 'style', url_simplify(plugin_dir_url( __FILE__).'/css/tree-manager.css'));
+
+        add_shortcode( 'yandex_map', array('Tree_Manager', 'map_function') );
+
         register_activation_hook( __FILE__, array( $this, 'create_table' ) );
+    }
+
+    /**
+     * Map functions shortcut.
+     *
+     * @return object
+     */
+    function map_function( $atts ) {
+        include(dirname( __FILE__ ) . '/includes/map/geo.php');
+        return geo_container();
     }
 
     /**
@@ -210,14 +223,14 @@ END;
 Тис (Taxus)
 END;
         // Adding types
-        foreach(explode("\n", $TYPES_0) as $name) {
+        foreach(array_map('trim', explode("\n", $TYPES_0)) as $name) {
             if (strlen($name) > 1) {
                 $sql = "INSERT INTO ".$wpdb->prefix."types (name, icon) values ('$name', 0)";
                 dbDelta( $sql );
             }
         }
 
-        foreach(explode("\n", $TYPES_1) as $name) {
+        foreach(array_map('trim', explode("\n", $TYPES_1)) as $name) {
             if (strlen($name) > 1) {
                 $sql = "INSERT INTO ".$wpdb->prefix."types (name, icon) values ('$name', 1)";
                 dbDelta( $sql );
@@ -233,8 +246,8 @@ END;
 
         // Adding trees
         foreach(range(1, 1000) as $index) {
-            $lat_base = 52.595231 + (rand(0, 10000) - 5000) * 0.2 / 10000;
-            $lng_base = 104.930529 + (rand(0, 10000) - 5000) * 0.2 / 10000;
+            $lat_base = 55.76 + (rand(0, 10000) - 5000) * 0.2 / 10000;
+            $lng_base = 37.64 + (rand(0, 10000) - 5000) * 0.2 / 10000;
             $approved = rand(0, 1);
             $type_id = rand(1, 30);
             $url = 'type_'.$index;

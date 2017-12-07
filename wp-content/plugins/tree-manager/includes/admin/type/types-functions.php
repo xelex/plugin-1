@@ -2,24 +2,6 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /**
- * Retrieve type data from the database.
- *
- * @param int $id
- *
- * @return object
- */
-function ag_get_type_icon( $icon_id = -1 ) {
-    $result = $tmp.'all_30.png';
-
-    $tmp = plugin_dir_url( __FILE__).'/../../../img/icon_';
-    if ($icon_id == 0 or $icon_id == 1) {
-        $result = $tmp.$icon_id.'_30.png';
-    }
-
-    return url_simplify($result);
-}
-
-/**
  * Retrieve type counters from the database.
  *
  * @param int $id

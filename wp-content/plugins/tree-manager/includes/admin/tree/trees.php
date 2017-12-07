@@ -30,7 +30,7 @@
                     break;
             }
         ?>
-        <?php echo '<a href="'.add_query_arg('action', 'view').'" class="add-new-h2">На карту</a>'; ?>
+        <?php echo '<a href="'.add_query_arg('action', 'view').'" class="add-new-h2">Показать на карте</a>'; ?>
     </h2>
     <form method="post">
         <input type="hidden" name="page" value="trees">

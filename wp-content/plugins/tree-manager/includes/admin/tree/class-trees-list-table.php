@@ -97,7 +97,7 @@ class Trees_List_Table extends WP_List_Table {
         if (intval($item->approved) != 1) {
             $actions['approve'] = sprintf( '<a href="?page=%s&action=%s&id=%d">Резрешить</a>',  esc_attr( $_REQUEST['page'] ), 'approve', absint( $item->id ) );
         }
-        $actions['delete'] = sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce );        
+        $actions['delete'] = sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s" onclick="return confirm(\'Вы уверены ?\');">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce );        
         return sprintf( '<a href="?page=%s&action=%s&id=%d">%s</a>',  esc_attr( $_REQUEST['page'] ), 'view', absint( $item->id ), $title ) . $this->row_actions( $actions );
     }
 
@@ -207,16 +207,16 @@ class Trees_List_Table extends WP_List_Table {
         $current = ( !empty($_REQUEST['filter']) ? $_REQUEST['filter'] : 'all');
 
         $class = ($current == 'all' ? ' class="current"' :'');
-        $all_url = remove_query_arg('filter');
+        $all_url = remove_query_arg('filter_id', remove_query_arg('filter'));
         $views['all'] = "<a href='{$all_url }' {$class} >Все</a>";
 
-        $url = add_query_arg('filter', 'unapproved');
+        $url = remove_query_arg('filter_id', add_query_arg('filter', 'unapproved'));
         $class = ($current == 'unapproved' ? ' class="current"' :'');
-        $views['foo'] = "<a href='{$url}' {$class} >Непроверенные</a>";
+        $views['unapproved'] = "<a href='{$url}' {$class} >Непроверенные</a>";
 
-        $url = add_query_arg('filter', 'approved');
+        $url = remove_query_arg('filter_id', add_query_arg('filter', 'approved'));
         $class = ($current == 'approved' ? ' class="current"' :'');
-        $views['bar'] = "<a href='{$url}' {$class} >Проверенные</a>";
+        $views['approved'] = "<a href='{$url}' {$class} >Проверенные</a>";
 
         return $views;
     }

@@ -43,7 +43,7 @@
                         <input type="date" name="when" id="when" class="regular-text" value="<?php echo esc_attr( $item->when ); ?>"  />
                     </td>
                 </tr>
-                <tr class="row-when">
+                <tr class="row-type_id">
                     <th scope="row">
                         <label for="when"><?php _e( 'Порода дерева', 'vbh' ); ?></label>
                     </th>

@@ -32,3 +32,14 @@
     width: 100%;
     min-height: 300px;
 }
+
+#yandex_map {
+    min-width: 400px;
+    width: 100%;
+    min-height: 820px;
+    height: 100%;
+}
+
+#wpfooter {
+    display: none;
+}

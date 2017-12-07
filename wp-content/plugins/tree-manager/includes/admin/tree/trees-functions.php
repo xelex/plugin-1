@@ -137,17 +137,20 @@ function ac_insert_tree( $args = array() ) {
         'id' => null,
         'lat' => '',
         'lng' => '',
-        'approved' => '',
-        'action_id' => '',
-        'owner_id' => '',
-        'type_id' => '',
+        'approved' => 0,
+        'action_id' => 0,
+        'owner_id' => 0,
+        'type_id' => 0,
         'url' => '',
-        'planted' => '',
-        'last' => ''
+        'planted' => ''
     );
 
     $args       = wp_parse_args( $args, $defaults );
     $table_name = $wpdb->prefix . 'trees';
+
+    // Remove feels we do not want to update
+    unset( $args['type_id'] );
+    unset( $args['last'] );
 
     // remove row id to determine if new or update
     $row_id = (int) $args['id'];

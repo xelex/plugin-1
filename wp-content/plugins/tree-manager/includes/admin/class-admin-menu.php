@@ -68,7 +68,7 @@ class Admin_Menu {
     }
 
     public function plugin_settings_page() {
-        plugin_page_trees();
+        plugin_page_activities();
     }
 
     /**

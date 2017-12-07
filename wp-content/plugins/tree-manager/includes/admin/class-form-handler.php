@@ -42,15 +42,15 @@ class Form_Handler {
         }
 
         $errors   = array();
-        $page_url = menu_page_url( 'tree-manager', false );
+        $page_url = menu_page_url( 'tree-manager-trees', false );
         $field_id = isset( $_POST['field_id'] ) ? absint( $_POST['field_id'] ) : 0;
 
         $lat = isset( $_POST['lat'] ) ? sanitize_text_field( $_POST['lat'] ) : '';
         $lng = isset( $_POST['lng'] ) ? sanitize_text_field( $_POST['lng'] ) : '';
-        $approved = isset( $_POST['approved'] ) ? sanitize_text_field( $_POST['approved'] ) : '';
-        $action_id = isset( $_POST['action_id'] ) ? sanitize_text_field( $_POST['action_id'] ) : '';
-        $owner_id = isset( $_POST['owner_id'] ) ? sanitize_text_field( $_POST['owner_id'] ) : '';
-        $type_id = isset( $_POST['type_id'] ) ? sanitize_text_field( $_POST['type_id'] ) : '';
+        $approved = intval(isset( $_POST['approved'] ) ? sanitize_text_field( $_POST['approved'] ) : 0);
+        $action_id = intval(isset( $_POST['action_id'] ) ? sanitize_text_field( $_POST['action_id'] ) : 0);
+        $owner_id = intval(isset( $_POST['owner_id'] ) ? sanitize_text_field( $_POST['owner_id'] ) : 0);
+        $type_id = intval(isset( $_POST['type_id'] ) ? sanitize_text_field( $_POST['type_id'] ) : 0);
         $url = isset( $_POST['url'] ) ? sanitize_text_field( $_POST['url'] ) : '';
         $planted = isset( $_POST['planted'] ) ? sanitize_text_field( $_POST['planted'] ) : '';
         $last = isset( $_POST['last'] ) ? sanitize_text_field( $_POST['last'] ) : '';
@@ -73,7 +73,6 @@ class Form_Handler {
             $insert_id = ac_insert_tree( $fields );
         } else {
             $fields['id'] = $field_id;
-
             $insert_id = ac_insert_tree( $fields );
         }
 
@@ -84,7 +83,7 @@ class Form_Handler {
         }
 
         // Redirect
-//        wp_redirect( $redirect_to );
+        wp_redirect( $redirect_to );
         exit;
     }
 
@@ -136,7 +135,7 @@ class Form_Handler {
         }
 
         // Redirect
-//        wp_redirect( $redirect_to );
+        wp_redirect( $redirect_to );
         exit;
     }
 
@@ -201,7 +200,7 @@ class Form_Handler {
         }
 
         // Redirect
-//        wp_redirect( $redirect_to );
+        wp_redirect( $redirect_to );
         exit;
     }
 
@@ -272,7 +271,7 @@ class Form_Handler {
      * Bulk operation handlers
      */
     public function handle_activities_bulk_action() {
-        $this->handle_bulk_action('tree-manager-activities', 'ac_delete_activity', 'ac_delete_activity');
+        $this->handle_bulk_action('tree-manager', 'ac_delete_activity', 'ac_delete_activity');
     }
 
     public function handle_plantators_bulk_action() {
@@ -280,11 +279,11 @@ class Form_Handler {
     }
 
     public function handle_types_bulk_action() {
-        $this->handle_bulk_action('tree-manager-planttypesators', 'ac_delete_type', 'ac_delete_type');
+        $this->handle_bulk_action('tree-manager-types', 'ac_delete_type', 'ac_delete_type');
     }
 
     public function handle_trees_bulk_action() {
-        $this->handle_bulk_action('tree-manager', 'ac_delete_tree', 'ac_delete_tree');
+        $this->handle_bulk_action('tree-manager-trees', 'ac_delete_tree', 'ac_delete_tree');
     }
 
     private function handle_bulk_action($page, $nonce_name, $function) {

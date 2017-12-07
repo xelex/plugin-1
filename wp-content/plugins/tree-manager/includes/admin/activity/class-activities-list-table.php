@@ -96,8 +96,8 @@ class Activities_List_Table extends WP_List_Table {
         $actions = [
             'edit'   => sprintf( '<a href="?page=%s&action=%s&id=%d">Редактировать</a>',  esc_attr( $_REQUEST['page'] ), 'edit', absint( $item->id ) ),
             'qr'   => sprintf( '<a href="?page=%s&action=%s&id=%d">QR-код</a>',  esc_attr( $_REQUEST['page'] ), 'qr', absint( $item->id ) ),
-            'map'   => sprintf( '<a href="?page=%s&action=%s&filter=activity&filter_id=%d">Карта посадок</a>',  'tree-manager-trees', 'view', absint( $item->id ) ),
-            'delete' => sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce )
+            'map'   => sprintf( '<a href="?page=%s&action=%s&filter=action&filter_id=%d">Карта посадок</a>',  'tree-manager-trees', 'view', absint( $item->id ) ),
+            'delete' => sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s" onclick="return confirm(\'Вы уверены ?\');">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce )
         ];
 
         return sprintf( '<a href="?page=%s&action=%s&id=%d">%s</a>',  esc_attr( $_REQUEST['page'] ), 'view', absint( $item->id ), $title ) . $this->row_actions( $actions );

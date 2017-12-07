@@ -44,6 +44,7 @@
             geo_point.events.add('dragend', function () {
                 getAddress(geo_point.geometry.getCoordinates());
             });
+            getAddress(coords);
         }
         
         geo_map.events.add('click', function (e) {

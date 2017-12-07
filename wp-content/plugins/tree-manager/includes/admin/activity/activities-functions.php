@@ -14,7 +14,6 @@ function ac_get_activity( $id = 0 ) {
     $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}activities WHERE id = %d", $id ) );
     
     # Apply hooks
-    
     $result->{'when'} = explode(' ', $result->when)[0];
     return $result;
 }
