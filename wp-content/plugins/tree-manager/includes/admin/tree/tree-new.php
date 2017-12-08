@@ -48,7 +48,7 @@
                         <label for="type_id"><?php _e( 'Порода дерева', 'vbh' ); ?></label>
                     </th>
                     <td>
-                        <select name="type_id" class="regular-text" disabled="true">
+                        <select name="type_id" class="regular-text">
                             <?php echo ac_types_selector($item->type_id); ?>
                         </select>
                     </td>
@@ -58,7 +58,7 @@
                         <label for="planted"><?php _e( 'Дата посадки', 'vbh' ); ?></label>
                     </th>
                     <td>
-                        <input type="text" name="planted" id="planted" class="regular-text" value="<?php echo esc_attr( $item->planted ); ?>"  />
+                        <input type="date" name="planted" id="planted" class="regular-text" value="<?php echo esc_attr( $item->planted ); ?>"  />
                     </td>
                 </tr>
             </tbody>

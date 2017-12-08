@@ -50,7 +50,7 @@ class Activities_List_Table extends WP_List_Table {
             case 'description':
                 return $item->{$column_name};
             case 'global':
-                return $item->global ? 'Да' : 'Нет';
+                return $item->global == 1 ? 'Да' : 'Нет';
             default:
                 return print_r( $item, true );
         }
@@ -152,7 +152,7 @@ class Activities_List_Table extends WP_List_Table {
      */
     public function get_bulk_actions() {
         $actions = [
-            'bulk-delete' => 'Delete'
+            'bulk-delete' => 'Удалить'
         ];
 
         return $actions;

@@ -197,8 +197,8 @@ class Tree_Manager {
 Дуб (Quercus)
 Ясень (Fraxinus)
 Вяз, ильм, берест (Ulmus)
-Каштан посевной, съедобный (Castanea sativa)
-Бархатное дерево или бархат амурский (Pheilodendron amurense)
+Каштан посевной (Castanea sativa)
+Бархатное дерево (Pheilodendron amurense)
 Фисташка (Pistacia)
 Акация белая (Robinia pseudoacacia)
 Береза (Betula)
@@ -217,6 +217,8 @@ class Tree_Manager {
 Рябина обыкновенная (Sorbus aucuparia)
 Лещина обыкновенная, орешник (Colypus avellana)
 Железное дерево или парротия персидская (Parrotia persica)
+Гледичия обыкновенная (Gleditsia triacanthos)
+Карельская береза (Betula pendula var. carelica)
 END;
     $TYPES_1 = <<<END
 Лиственница (Larix)
@@ -242,37 +244,39 @@ END;
             }
         }
 
-        // Adding activity
-        foreach(range(1, 10) as $index) {
-            $name = 'Акция '.$index;
-            $global = rand(0, 1);
-            $sql = "INSERT INTO ".$wpdb->prefix."activities (name, type_id, lat, lng, global) values ('$name', NULL, NULL, NULL, $global)";
-            dbDelta( $sql );
-        }
+        if (false) {
+            // Adding activity
+            foreach(range(1, 10) as $index) {
+                $name = 'Акция '.$index;
+                $global = rand(0, 1);
+                $sql = "INSERT INTO ".$wpdb->prefix."activities (name, type_id, lat, lng, global) values ('$name', NULL, NULL, NULL, $global)";
+                dbDelta( $sql );
+            }
 
-        // Adding trees
-        foreach(range(1, 1000) as $index) {
-            $lat_base = 55.76 + (rand(0, 10000) - 5000) * 0.2 / 10000;
-            $lng_base = 37.64 + (rand(0, 10000) - 5000) * 0.2 / 10000;
-            $approved = rand(0, 1);
-            $type_id = rand(1, 30);
-            $url = 'type_'.$index;
-            $action_id = rand(1, 10);
-            $sql = "INSERT INTO ".$wpdb->prefix."trees (lat, lng, action_id, owner_id, type_id, approved, url) values ".
-                "($lat_base, $lng_base, $action_id, 0, $type_id, $approved, '$url')";
-            dbDelta( $sql );
-        }
+            // Adding trees
+            foreach(range(1, 1000) as $index) {
+                $lat_base = 55.76 + (rand(0, 10000) - 5000) * 0.2 / 10000;
+                $lng_base = 37.64 + (rand(0, 10000) - 5000) * 0.2 / 10000;
+                $approved = rand(0, 1);
+                $type_id = rand(1, 30);
+                $url = 'type_'.$index;
+                $action_id = rand(1, 10);
+                $sql = "INSERT INTO ".$wpdb->prefix."trees (lat, lng, action_id, owner_id, type_id, approved, url) values ".
+                    "($lat_base, $lng_base, $action_id, 0, $type_id, $approved, '$url')";
+                dbDelta( $sql );
+            }
 
-        // Adding trees
-        foreach(range(1, 100) as $index) {
-            $lat_base = 55.76 + 0.2 + 0.2 * (rand(5000, 10000) - 5000) / 10000;
-            $lng_base = 37.64 + 0.2 + 0.2 * (rand(5000, 10000) - 5000) / 10000;
-            $type_id = rand(1, 30);
-            $action_id = rand(1, 10);
-            $amount =rand(1, 5000);
-            $sql = "INSERT INTO ".$wpdb->prefix."trees (lat, lng, action_id, owner_id, type_id, approved, amount) values ".
-                "($lat_base, $lng_base, $action_id, 0, $type_id, 1, $amount)";
-            dbDelta( $sql );
+            // Adding trees
+            foreach(range(1, 100) as $index) {
+                $lat_base = 55.76 + 0.2 + 0.2 * (rand(5000, 10000) - 5000) / 10000;
+                $lng_base = 37.64 + 0.2 + 0.2 * (rand(5000, 10000) - 5000) / 10000;
+                $type_id = rand(1, 30);
+                $action_id = rand(1, 10);
+                $amount =rand(1, 5000);
+                $sql = "INSERT INTO ".$wpdb->prefix."trees (lat, lng, action_id, owner_id, type_id, approved, amount) values ".
+                    "($lat_base, $lng_base, $action_id, 0, $type_id, 1, $amount)";
+                dbDelta( $sql );
+            }
         }
     }
 }

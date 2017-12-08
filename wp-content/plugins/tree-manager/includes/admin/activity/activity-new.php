@@ -3,9 +3,6 @@
 ?>
 <div class="wrap">
     <h1><?php _e( 'Новая акция', 'vbh' ); ?></h1>
-
-    <?php $item = ac_get_activity( $id ); ?>
-
     <form action="" method="post">
 
         <table class="form-table">
@@ -13,6 +10,7 @@
                 <tr class="row-name">
                     <th scope="row">
                         <label for="name"><?php _e( 'Название', 'vbh' ); ?></label>
+                        <br/><span style="font-size: 12px; font-weight: 400; font-style: italic; color: red;">Обязательное поле</span>
                     </th>
                     <td>
                         <input type="text" name="name" id="name" class="regular-text" value="" required="required" />
@@ -40,7 +38,7 @@
                         <label for="global"><?php _e( 'Федеральная акция', 'vbh' ); ?></label>
                     </th>
                     <td>
-                        <input name="global" type="checkbox" id="global" value="0">
+                        <input name="global" type="checkbox" id="global" value="1">
                     </td>
                 </tr>
                 <tr class="row-when">
@@ -75,7 +73,7 @@
         <input type="hidden" name="field_id" value="0">
 
         <?php wp_nonce_field( 'ac_new_activity' ); ?>
-        <?php submit_button( __( 'Создать акцию', 'vbh' ), 'primary', 'submit_activity_qrgen' ); ?>
+        <?php submit_button( __( 'Создать акцию', 'vbh' ), 'primary', 'submit_activity' ); ?>
 
     </form>
 </div>

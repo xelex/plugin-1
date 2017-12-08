@@ -150,7 +150,6 @@ function ac_insert_tree( $args = array() ) {
     $table_name = $wpdb->prefix . 'trees';
 
     // Remove feels we do not want to update
-    unset( $args['type_id'] );
     unset( $args['last'] );
 
     // remove row id to determine if new or update

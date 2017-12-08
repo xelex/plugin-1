@@ -27,6 +27,7 @@ function ac_get_activity( $id = 0 ) {
  */
 function ac_get_activity_trees_count( $id ) {
     global $wpdb;
+    
     if (is_array($id)) {
         return $wpdb->get_results(
             "SELECT count(*) as count, action_id FROM {$wpdb->prefix}trees WHERE action_id in (".implode(', ', $id).") group by action_id"
@@ -42,7 +43,7 @@ function ac_get_activity_trees_count( $id ) {
  */
 function ac_get_activities_map() {
     global $wpdb;
-    
+
     return $wpdb->get_results(" SELECT id, name, global FROM {$wpdb->prefix}activities");
 }
 
@@ -154,6 +155,17 @@ function ac_insert_activity( $args = array() ) {
     $args       = wp_parse_args( $args, $defaults );
     $table_name = $wpdb->prefix . 'activities';
 
+    if (intval($args['type_id']) == 0) {
+        unset($args['type_id']);
+    }
+
+    if (intval($args['lat']) == 0) {
+        unset($args['lat']);
+    }
+
+    if (intval($args['lng']) == 0) {
+        unset($args['lng']);
+    }
     // remove row id to determine if new or update
     $row_id = (int) $args['id'];
     unset( $args['id'] );

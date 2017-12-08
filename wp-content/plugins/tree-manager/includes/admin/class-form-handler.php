@@ -13,7 +13,7 @@ class Form_Handler {
     public function __construct() {
         $hooks = array(
             'handle_types_form_submit', 'handle_types_bulk_action',
-            'handle_trees_form_submit', 'handle_trees_bulk_action',
+            'handle_trees_form_submit', 'handle_treegroups_form_submit','handle_trees_bulk_action',
             'handle_plantators_form_submit', 'handle_plantators_bulk_action',
             'handle_activities_form_submit', 'handle_activities_bulk_action',
             'handle_qrgen');
@@ -21,6 +21,68 @@ class Form_Handler {
         foreach ($hooks as $hook) {
             add_action( 'admin_init', [ $this, $hook ] );
         }
+    }
+
+    public function handle_treegroups_form_submit() {
+        if ( ! isset( $_POST['submit_treegroup'] ) ) {
+            return;
+        }
+
+        if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'ac_new_treegroup' ) ) {
+            return;
+        }
+
+        if ( ! current_user_can( 'read' ) ) {
+            wp_die( __( 'Permission Denied!', 'vbh' ) );
+        }
+
+        $errors   = array();
+        $page_url = menu_page_url( 'tree-manager-trees', false );
+        $field_id = isset( $_POST['field_id'] ) ? absint( $_POST['field_id'] ) : 0;
+
+        $lat = isset( $_POST['lat'] ) ? sanitize_text_field( $_POST['lat'] ) : '';
+        $lng = isset( $_POST['lng'] ) ? sanitize_text_field( $_POST['lng'] ) : '';
+        $approved = intval(isset( $_POST['approved'] ) ? sanitize_text_field( $_POST['approved'] ) : 0);
+        $action_id = intval(isset( $_POST['action_id'] ) ? sanitize_text_field( $_POST['action_id'] ) : 0);
+        $type_id = intval(isset( $_POST['type_id'] ) ? sanitize_text_field( $_POST['type_id'] ) : 0);
+
+        $amount = intval(isset( $_POST['amount'] ) ? sanitize_text_field( $_POST['amount'] ) : 0);
+        $description = isset( $_POST['description'] ) ? sanitize_text_field( $_POST['description'] ) : '';
+        $url = isset( $_POST['url'] ) ? sanitize_text_field( $_POST['url'] ) : '';
+        $planted = isset( $_POST['planted'] ) ? sanitize_text_field( $_POST['planted'] ) : '';
+        $last = isset( $_POST['last'] ) ? sanitize_text_field( $_POST['last'] ) : '';
+
+
+        $fields = array(
+            'lat' => $lat,
+            'lng' => $lng,
+            'approved' => $approved,
+            'action_id' => $action_id,
+            'type_id' => $type_id,
+            'url' => $url,
+            'amount' => $amount,
+            'description' => $description,
+            'planted' => $planted,
+            'last' => $last,
+        );
+
+        // New or edit?
+        if ( ! $field_id ) {
+            $insert_id = ac_insert_tree( $fields );
+        } else {
+            $fields['id'] = $field_id;
+            $insert_id = ac_insert_tree( $fields );
+        }
+
+        if ( is_wp_error( $insert_id ) ) {
+            $redirect_to = add_query_arg( array( 'message' => 'error' ), $page_url );
+        } else {
+            $redirect_to = add_query_arg( array( 'message' => 'success' ), $page_url );
+        }
+
+        // Redirect
+        wp_redirect( $redirect_to );
+        exit;
     }
 
     /**
@@ -233,8 +295,8 @@ class Form_Handler {
         $lng = doubleval(isset( $_POST['lng'] ) ? sanitize_text_field( $_POST['lng'] ) : 0);
         $when = isset( $_POST['when'] ) ? sanitize_text_field( $_POST['when'] ) : '';
         $location = isset( $_POST['location'] ) ? sanitize_text_field( $_POST['location'] ) : '';
+        $global = isset( $_POST['global']) ? 1 : 0;
         $description = isset( $_POST['description'] ) ? wp_kses_post( $_POST['description'] ) : '';
-
 
         $fields = array(
             'name' => $name,
@@ -243,6 +305,7 @@ class Form_Handler {
             'lat' => $lat,
             'lng' => $lng,
             'when' => $when,
+            'global' => $global,
             'location' => $location,
             'description' => $description,
         );
@@ -271,30 +334,26 @@ class Form_Handler {
      * Bulk operation handlers
      */
     public function handle_activities_bulk_action() {
-        $this->handle_bulk_action('tree-manager', 'ac_delete_activity', 'ac_delete_activity');
+        $this->handle_bulk_action('tree-manager', 'ac_delete_activity', 'ac_delete_activity', 'activities');
     }
 
     public function handle_plantators_bulk_action() {
-        $this->handle_bulk_action('tree-manager-plantators', 'ac_delete_plantator', 'ac_delete_plantator');
+        $this->handle_bulk_action('tree-manager-plantators', 'ac_delete_plantator', 'ac_delete_plantator', 'plantators');
     }
 
     public function handle_types_bulk_action() {
-        $this->handle_bulk_action('tree-manager-types', 'ac_delete_type', 'ac_delete_type');
+        $this->handle_bulk_action('tree-manager-types', 'ac_delete_type', 'ac_delete_type', 'types');
     }
 
     public function handle_trees_bulk_action() {
-        $this->handle_bulk_action('tree-manager-trees', 'ac_delete_tree', 'ac_delete_tree');
+        $this->handle_bulk_action('tree-manager-trees', 'ac_delete_tree', 'ac_delete_tree', 'trees');
     }
 
-    private function handle_bulk_action($page, $nonce_name, $function) {
+    private function handle_bulk_action($page, $nonce_name, $function, $plural) {
         $page_url = menu_page_url( $page, false );
 
-        // Detect when a bulk action is being triggered...
-        if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'delete' ) {
-            // In our file that handles the request, verify the nonce.
-            $nonce = esc_attr( $_REQUEST['_wpnonce'] );
-
-            if ( ! wp_verify_nonce( $nonce, $nonce_name ) ) {
+        if ( $this->check('action', 'delete') ) {
+            if ( ! wp_verify_nonce( esc_attr( $_REQUEST['_wpnonce'] ), $nonce_name ) ) {
                 return;
             } else {
                 call_user_func( $function, absint( $_REQUEST['id'] ) );
@@ -308,12 +367,13 @@ class Form_Handler {
         }
 
         // If the delete bulk action is triggered
-        if ( ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == 'bulk-delete' )
-             || ( isset( $_REQUEST['action2'] ) && $_REQUEST['action2'] == 'bulk-delete' )
-        ) {
-            $delete_ids = esc_sql( $_REQUEST['bulk-delete'] );
+        if ( $this->check('action', 'bulk-delete') || $this->check('action2', 'bulk-delete') ) {
+            if ( ! wp_verify_nonce( esc_attr( $_REQUEST['_wpnonce'] ), 'bulk-'.$plural ) ) {
+                return;
+            }
 
             // loop over the array of record ids and delete them
+            $delete_ids = esc_sql( $_REQUEST['bulk-delete'] );
             foreach ( $delete_ids as $id ) {
                 call_user_func( $function, $id );
             }
@@ -325,6 +385,10 @@ class Form_Handler {
             exit;
         }
     }
+
+    private function check($name, $value) {
+        return isset( $_REQUEST[$name] ) && $_REQUEST[$name] == $value;
+    } 
 
     /**
      * QR generator

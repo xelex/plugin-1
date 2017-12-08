@@ -40,7 +40,7 @@
                         <label for="global"><?php _e( 'Федеральная акция', 'vbh' ); ?></label>
                     </th>
                     <td>
-                        <input name="global" type="checkbox" id="global" value="<?php echo $item->global ?>">
+                        <input name="global" type="checkbox" id="global" value="1" <?php echo $item->global == 1 ? 'checked' : '' ?> />
                     </td>
                 </tr>
                 <tr class="row-when">

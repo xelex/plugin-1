@@ -103,7 +103,7 @@ class Trees_List_Table extends WP_List_Table {
         if (intval($item->approved) != 1) {
             $actions['approve'] = sprintf( '<a href="?page=%s&action=%s&id=%d">Резрешить</a>',  esc_attr( $_REQUEST['page'] ), 'approve', absint( $item->id ) );
         }
-        $actions['delete'] = sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s" onclick="return confirm(\'Вы уверены ?\');">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce );        
+        $actions['delete'] = sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s" onclick="return confirm(\'Вы уверены ?\');">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce );
         return sprintf( '<a href="?page=%s&action=%s&id=%d">%s</a>',  esc_attr( $_REQUEST['page'] ), 'view', absint( $item->id ), $title ) . $this->row_actions( $actions );
     }
 
@@ -161,7 +161,7 @@ class Trees_List_Table extends WP_List_Table {
     public function get_bulk_actions() {
         $actions = [
             'bulk-delete' => 'Удалить',
-            'bulk-delete' => 'Резрешить'
+//            'bulk-allow' => 'Резрешить'
         ];
 
         return $actions;
