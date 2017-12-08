@@ -34,7 +34,7 @@
                         <label for="description"><?php _e( 'Название', 'vbh' ); ?></label>
                     </th>
                     <td>
-                        <textarea name="description" id="description"  rows="10" style="width: 100%" ><?php echo esc_attr( $item->description ); ?></textarea>
+                        <?php wp_editor($item->description, 'description') ?>
                     </td>
                 </tr>
             </tbody>

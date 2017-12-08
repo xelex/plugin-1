@@ -1,5 +1,5 @@
 <?php 
-    include($template = dirname( __FILE__ ) . '/../../map/geo-editor.php');
+    include(dirname( __FILE__ ) . '/../../map/geo-editor.php');
 ?>
 <div class="wrap">
     <h1><?php _e( 'Новая акция', 'vbh' ); ?></h1>
@@ -35,6 +35,14 @@
                     <p>
                     </td>
                 </tr>
+                <tr class="row-global">
+                    <th scope="row">
+                        <label for="global"><?php _e( 'Федеральная акция', 'vbh' ); ?></label>
+                    </th>
+                    <td>
+                        <input name="global" type="checkbox" id="global" value="0">
+                    </td>
+                </tr>
                 <tr class="row-when">
                     <th scope="row">
                         <label for="when"><?php _e( 'Дата проведения', 'vbh' ); ?></label>
@@ -58,7 +66,7 @@
                         <label for="description"><?php _e( 'Описание', 'vbh' ); ?></label>
                     </th>
                     <td>
-                        <textarea name="description" id="description" class="view-description"></textarea>
+                        <?php wp_editor('', 'description') ?>
                     </td>
                 </tr>
             </tbody>

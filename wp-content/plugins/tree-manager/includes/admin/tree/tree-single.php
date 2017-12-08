@@ -1,11 +1,11 @@
 <?php
     $filter = $_REQUEST['filter'];
-    $filter_id = $_REQUEST['filter_id'] ?? null;
+    $filter_id = $_REQUEST['filter_id'];
     if ($id > 0) {
         $filter = 'all';
         $filter_id = $id;
     }
-    include($template = dirname( __FILE__ ) . '/../../map/geo.php');
+    include(dirname( __FILE__ ) . '/../../map/geo.php');
 ?>
 <div class="wrap">
     <h1>

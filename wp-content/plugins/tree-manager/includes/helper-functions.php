@@ -94,15 +94,29 @@ function ac_activities_selector($selected = false) {
         's'       => $s
     ];
 
-    $types = ac_get_activities_map($args);
+    $act = ac_get_activities_map($args);
     
-    $result = "";
-    foreach($types as $tmp) {
-        if ($selected === $tmp->id) {
-            $result = $result."<option value=\"".$tmp->id."\" selected=1>".$tmp->name."</option>";
-        } else {
-            $result = $result."<option value=\"".$tmp->id."\">".$tmp->name."</option>";
+    $result = "<optgroup label=\"Федеральные\">";
+    foreach($act as $tmp) {
+        if ($tmp->global > 0) {
+            if ($selected === $tmp->id) {
+                $result = $result."<option value=\"".$tmp->id."\" selected=1>".$tmp->name."</option>";
+            } else {
+                $result = $result."<option value=\"".$tmp->id."\">".$tmp->name."</option>";
+            }
         }
     }
+    $result = $result."</optgroup>";
+    $result = $result."<optgroup label=\"Региональные\">";
+    foreach($act as $tmp) {
+        if ($tmp->global == 0) {
+            if ($selected === $tmp->id) {
+                $result = $result."<option value=\"".$tmp->id."\" selected=1>".$tmp->name."</option>";
+            } else {
+                $result = $result."<option value=\"".$tmp->id."\">".$tmp->name."</option>";
+            }
+        }
+    }
+    $result = $result."</optgroup>";
     return $result;
 }

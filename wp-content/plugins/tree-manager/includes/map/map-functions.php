@@ -2,7 +2,7 @@
 
 function ac_tree_manager_map_query_base() {
     global $wpdb;
-    return "SELECT a.id, a.lat, a.lng, b.icon FROM {$wpdb->prefix}trees as a, {$wpdb->prefix}types as b WHERE a.type_id = b.id ";
+    return "SELECT a.id, a.lat, a.lng, b.icon, a.amount FROM {$wpdb->prefix}trees as a, {$wpdb->prefix}types as b WHERE a.type_id = b.id ";
 }
 
 function ac_tree_manager_map_query_geo($lat_1, $lng_1, $lat_2, $lng_2) {

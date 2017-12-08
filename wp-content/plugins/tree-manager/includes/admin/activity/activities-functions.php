@@ -43,7 +43,7 @@ function ac_get_activity_trees_count( $id ) {
 function ac_get_activities_map() {
     global $wpdb;
     
-    return $wpdb->get_results(" SELECT id, name FROM {$wpdb->prefix}activities");
+    return $wpdb->get_results(" SELECT id, name, global FROM {$wpdb->prefix}activities");
 }
 
 /**
@@ -147,6 +147,7 @@ function ac_insert_activity( $args = array() ) {
         'lng' => '',
         'location' => '',
         'when' => '',
+        'global' => 0,
         'description' => '',
     );
 

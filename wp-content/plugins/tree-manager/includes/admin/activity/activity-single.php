@@ -1,5 +1,5 @@
 <?php
-    include($template = dirname( __FILE__ ) . '/../../map/geo-view.php');
+    include(dirname( __FILE__ ) . '/../../map/geo-view.php');
     $item = ac_get_activity( $id );
     $type = ac_get_type($item->type_id);
 ?>
@@ -33,6 +33,14 @@
                 <p>
                 </td>
             </tr>
+            <tr class="row-global">
+                <th scope="row">
+                    <label for="global"><?php _e( 'Федеральная акция', 'vbh' ); ?></label>
+                </th>
+                <td>
+                    <b><?php echo $item->global == 1 ? 'Да' : 'Нет' ?></b>
+                </td>
+            </tr>
             <tr class="row-when">
                 <th scope="row">
                     <b><?php _e( 'Дата проведения', 'vbh' ); ?></b>
@@ -54,7 +62,7 @@
                     <label for="description"><?php _e( 'Описание', 'vbh' ); ?></b>
                 </th>
                 <td>
-                    <textarea name="description" id="description" readonly="true" class="view-description"><?php echo esc_attr( $item->description ); ?></textarea>
+                    <?php echo $item->description; ?>
                 </td>
             </tr>
         </tbody>

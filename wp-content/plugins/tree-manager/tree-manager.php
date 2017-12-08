@@ -147,6 +147,7 @@ class Tree_Manager {
             `when` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
             description text DEFAULT '' NOT NULL,
 
+            global INT DEFAULT 0 NOT NULL,
             date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
             PRIMARY KEY id (id),
 
@@ -163,10 +164,14 @@ class Tree_Manager {
             lat DOUBLE DEFAULT 0 NOT NULL,
             lng DOUBLE DEFAULT 0 NOT NULL,
             approved INT DEFAULT 0 NOT NULL,
-            action_id int(11) NOT NULL,
-            owner_id int(11) NOT NULL,
-            type_id int(11) NOT NULL,
+            action_id int(11),
+            owner_id int(11),
+            type_id int(11),
+
+            amount int(11) DEFAULT 0 NOT NULL,
+            description TEXT DEFAULT '' NOT NULL,
             url varchar(255) DEFAULT '' NOT NULL,
+
             planted DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
             last DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -240,7 +245,8 @@ END;
         // Adding activity
         foreach(range(1, 10) as $index) {
             $name = 'Акция '.$index;
-            $sql = "INSERT INTO ".$wpdb->prefix."activities (name, type_id, lat, lng) values ('$name', NULL, NULL, NULL)";
+            $global = rand(0, 1);
+            $sql = "INSERT INTO ".$wpdb->prefix."activities (name, type_id, lat, lng, global) values ('$name', NULL, NULL, NULL, $global)";
             dbDelta( $sql );
         }
 
@@ -254,6 +260,18 @@ END;
             $action_id = rand(1, 10);
             $sql = "INSERT INTO ".$wpdb->prefix."trees (lat, lng, action_id, owner_id, type_id, approved, url) values ".
                 "($lat_base, $lng_base, $action_id, 0, $type_id, $approved, '$url')";
+            dbDelta( $sql );
+        }
+
+        // Adding trees
+        foreach(range(1, 100) as $index) {
+            $lat_base = 55.76 + 0.2 + 0.2 * (rand(5000, 10000) - 5000) / 10000;
+            $lng_base = 37.64 + 0.2 + 0.2 * (rand(5000, 10000) - 5000) / 10000;
+            $type_id = rand(1, 30);
+            $action_id = rand(1, 10);
+            $amount =rand(1, 5000);
+            $sql = "INSERT INTO ".$wpdb->prefix."trees (lat, lng, action_id, owner_id, type_id, approved, amount) values ".
+                "($lat_base, $lng_base, $action_id, 0, $type_id, 1, $amount)";
             dbDelta( $sql );
         }
     }

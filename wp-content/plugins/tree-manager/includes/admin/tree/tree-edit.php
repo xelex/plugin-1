@@ -1,5 +1,5 @@
 <?php 
-    include($template = dirname( __FILE__ ) . '/../../map/geo-editor.php');
+    include(dirname( __FILE__ ) . '/../../map/geo-editor.php');
 
     $item = ac_get_tree( $id );
 ?>
@@ -10,7 +10,7 @@
             <tbody>
                 <tr class="row-lat">
                     <th scope="row">
-                        <label for="lat"><?php _e( 'Место проведения', 'vbh' ); ?></label>
+                        <label for="lat"><?php _e( 'Место посадки', 'vbh' ); ?></label>
                     </th>
                     <td>
                     <p>

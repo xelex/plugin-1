@@ -31,6 +31,8 @@
             }
         ?>
         <?php echo '<a href="'.add_query_arg('action', 'view').'" class="add-new-h2">Показать на карте</a>'; ?>
+        <?php echo '<a href="'.add_query_arg('action', 'new').'" class="add-new-h2 add-new-h2-right">Добавить дерево</a>'; ?>
+        <?php echo '<a href="'.add_query_arg('action', 'new').'" class="add-new-h2 add-new-h2-right">Добавить группу</a>'; ?>
     </h2>
     <form method="post">
         <input type="hidden" name="page" value="trees">

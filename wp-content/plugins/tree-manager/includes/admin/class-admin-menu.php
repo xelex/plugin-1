@@ -160,6 +160,10 @@ class Admin_Menu {
                 $template = dirname( __FILE__ ) . '/tree/tree-new.php';
                 break;
 
+            case 'group':
+                $template = dirname( __FILE__ ) . '/tree/tree-group.php';
+                break;
+
             default:
                 $template = dirname( __FILE__ ) . '/tree/trees.php';
                 break;

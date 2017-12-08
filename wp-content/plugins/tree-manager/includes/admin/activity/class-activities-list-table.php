@@ -49,6 +49,8 @@ class Activities_List_Table extends WP_List_Table {
             case 'location':
             case 'description':
                 return $item->{$column_name};
+            case 'global':
+                return $item->global ? 'Да' : 'Нет';
             default:
                 return print_r( $item, true );
         }
@@ -110,14 +112,12 @@ class Activities_List_Table extends WP_List_Table {
      */
     function get_columns() {
         $columns = [
-            'cb' => '<input type="checkbox" />',
-            'name' => __( 'Название', 'vbh' ),
-#'type_id' => __( 'Type Id', 'vbh' ),
-#'lat' => __( 'Lat', 'vbh' ),
-#'lng' => __( 'Lng', 'vbh' ),
+            'cb'       => '<input type="checkbox" />',
+            'name'     => __( 'Название', 'vbh' ),
             'location' => __( 'Место проведения', 'vbh' ),
-            'when' => __( 'Дата проведения', 'vbh' ),
-            'planted' => __( 'Посадок', 'vbh' ),
+            'global'   => __( 'Федеральная', 'vbh'),
+            'when'     => __( 'Дата проведения', 'vbh' ),
+            'planted'  => __( 'Посадок', 'vbh' ),
         ];
 
         return $columns;
@@ -136,6 +136,7 @@ class Activities_List_Table extends WP_List_Table {
             'lat' => array( 'lat', true ),
             'lng' => array( 'lng', true ),
             'when' => array( 'when', true ),
+            'global' => array( 'global', true ),
             'location' => array( 'location', true ),
 #            'planted' => array( 'planted', true ),
             'description' => array( 'description', true ),

@@ -1,7 +1,7 @@
 <div class="wrap">
     <h2>
         <?php _e( 'Акции', 'vbh' ); ?> 
-        <?php echo sprintf( '<a href="?page=%s&action=%s" class="add-new-h2">Добавить</a>',  esc_attr( $_REQUEST['page'] ), 'new' ); ?>
+        <?php echo sprintf( '<a href="?page=%s&action=%s" class="add-new-h2 add-new-h2-right">Добавить</a>',  esc_attr( $_REQUEST['page'] ), 'new' ); ?>
     </h2>
 
     <form method="post">

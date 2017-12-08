@@ -44,9 +44,7 @@ $count_act = ac_get_type_activities_count( $id );
                     <b><?php _e( 'Описание', 'vbh' ); ?></b>
                 </th>
                 <td>
-                    <textarea class="view-description" readonly="true">
-                        <?php echo esc_attr( $item->description ); ?>
-                    </textarea>
+                    <?php echo $item->description; ?>
                 </td>
             </tr>
         </tbody>

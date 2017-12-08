@@ -14,6 +14,10 @@
     width: 150px;    
 }
 
+.column-global, .column-approved, .column-id {
+    width: 120px;
+}
+
 .regular-text {
     width: 100%;
 }
@@ -42,4 +46,8 @@
 
 #wpfooter {
     display: none;
+}
+
+.add-new-h2-right {
+    float: right;
 }

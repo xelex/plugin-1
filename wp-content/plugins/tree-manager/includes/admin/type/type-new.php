@@ -32,7 +32,7 @@
                         <label for="description"><?php _e( 'Название', 'vbh' ); ?></label>
                     </th>
                     <td>
-                        <textarea name="description" id="description"  rows="10" style="width: 100%" ></textarea>
+                        <?php wp_editor('', 'description') ?>
                     </td>
                 </tr>
             </tbody>

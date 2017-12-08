@@ -141,6 +141,7 @@ function ac_insert_tree( $args = array() ) {
         'action_id' => 0,
         'owner_id' => 0,
         'type_id' => 0,
+        'approved' => 0,
         'url' => '',
         'planted' => ''
     );

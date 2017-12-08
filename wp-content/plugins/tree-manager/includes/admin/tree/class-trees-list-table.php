@@ -43,9 +43,9 @@ class Trees_List_Table extends WP_List_Table {
             case 'id':
             case 'lat':
             case 'lng':
-            case 'owner_id':
             case 'url':
             case 'planted':
+            case 'amount':
             case 'last':
                 return $item->{$column_name};
             case 'action_id':
@@ -61,7 +61,13 @@ class Trees_List_Table extends WP_List_Table {
                     'view',
                     absint( $item->type_id ));
             case 'approved':
-                return $item->{$column_name} ? 'Да' : 'Нет';
+                return $item->approved ? 'Да' : 'Нет';
+            case 'owner_id':
+                if ($item->amount > 0) {
+                    return 'Группа из '.$item->amount;
+                } else {
+                    return $item->{$column_name};
+                }
             default:
                 return print_r( $item, true );
         }
