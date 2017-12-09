@@ -31,6 +31,7 @@ $qr_gen_url = url_simplify(plugin_dir_url( __FILE__).'/activity-qrgen.php?previe
         qr_canvas.getContext("2d").setTransform(PIXEL_RATIO, 0, 0, PIXEL_RATIO, 0, 0);
 
         qr_image.onload = function() {
+            console.log(1);
             var ctx = qr_canvas.getContext("2d");
             ctx.clearRect(0, 0, qr_canvas.width, qr_canvas.height);
             ctx.drawImage(qr_image, 0, 0, 400, 400);
@@ -38,7 +39,6 @@ $qr_gen_url = url_simplify(plugin_dir_url( __FILE__).'/activity-qrgen.php?previe
         }
 
         qr_image.src = "<?php echo $qr_gen_url; ?>";
-        console.log(qr_image.src);
     });
 
 </script>
@@ -76,7 +76,7 @@ $qr_gen_url = url_simplify(plugin_dir_url( __FILE__).'/activity-qrgen.php?previe
                         <b><?php _e( 'Предпросмотр', 'vbh' ); ?></b>
                     </th>
                     <td>
-                        <canvas id="qr_preview" style="width: 400px; height: 400px;"></canvas>
+                        <canvas id="qr_preview" style="width: 1600px; height: 1600px;"></canvas>
                     </td>
                 </tr>
                 <tr class="row-count">
