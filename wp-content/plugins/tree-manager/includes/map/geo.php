@@ -79,18 +79,19 @@
                     offset: [-33, -33]
                 }]
         });
+        
         objectManager.objects.options.set({
-            iconLayout: 'default#image'
-        });
-
-        objectManager.events.add('propertieschange', function (e) {
-            console.log(e);
+            iconLayout: 'default#image',
+            hideIconOnBalloonOpen: false
         });
 
         objectManager.objects.events.add('click', function (e) {
             var id = e.get('objectId');
-            loadBalloonData(id).then(function(data) {
-                console.log(data);
+            var obj = objectManager.objects.getById(id);
+
+            jQuery.get('/?page_id=41&id='+id, function(data) {
+                obj.properties.balloonContent = data;
+                objectManager.objects.balloon.open(id);
             });
         });  
 
@@ -135,10 +136,7 @@
                 options: customScale((r.a > 0 ? '1' : '') + (r.t == 0 ? '0': '1'), r.a)
             }
         });
-
         delete raw.data.f;
-
-        console.log(raw);
         return raw;
     }
 
