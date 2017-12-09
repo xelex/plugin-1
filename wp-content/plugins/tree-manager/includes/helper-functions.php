@@ -14,6 +14,10 @@ function ag_get_type_icon( $icon_id = -1 ) {
     return url_simplify($result);
 }
 
+function required() {
+    echo '<br/><span style="font-size: 12px; font-weight: 400; font-style: italic; color: red;">Обязательное поле</span>';
+}
+
 function url_simplify($path) {
     $prefix = '';
     if (strpos($path, 'http://') !== false) {
@@ -48,13 +52,13 @@ function encode_qr_url($id, $num) {
     return $LINK_PREFIX.'?'.$suffix;
 }
 
-function ac_types_selector($selected = false) {
-    $result = "<option value=\"\"></option>";
+function ac_types_selector($selected = NULL) {
+    $result = ""; //<option value=\"\"></option>";
     $args = [
         'number'  => -1,
         'offset'  => 0,
         'orderby' => 'icon',
-        'hoos'    => false,
+        'hooks'   => false,
         's'       => $s
     ];
 

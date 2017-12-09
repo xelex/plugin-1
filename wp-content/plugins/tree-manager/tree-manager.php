@@ -30,12 +30,17 @@ class Tree_Manager {
         require dirname( __FILE__ ) . '/includes/helper-functions.php';
         if ( is_admin() ) {
             require dirname( __FILE__ ) . '/includes/admin/class-admin-menu.php';
+            require dirname( __FILE__ ) . '/includes/admin/dashboard/dashboard.php';
             require dirname( __FILE__ ) . '/includes/admin/type/types-functions.php';
             require dirname( __FILE__ ) . '/includes/admin/tree/trees-functions.php';
             require dirname( __FILE__ ) . '/includes/admin/activity/activities-functions.php';
             require dirname( __FILE__ ) . '/includes/admin/plantator/plantators-functions.php';
 
             new Admin_Menu();
+
+            # Add dasboard items
+            add_action( 'wp_dashboard_setup', 'tree_manager_add_dashboard_widget' );
+            add_action( 'admin_bar_menu', 'tree_manager_add_dashboard_bar' );
         }
 
         // MAP-related things
@@ -44,6 +49,7 @@ class Tree_Manager {
         wp_enqueue_script('qr-canvas', url_simplify(plugin_dir_url( __FILE__).'/js/qrcanvas.packed.js'));
         wp_enqueue_style( 'style', url_simplify(plugin_dir_url( __FILE__).'/css/tree-manager.css'));
 
+        # Add shortcuts
         add_shortcode( 'yandex_map', array('Tree_Manager', 'map_function') );
 
         register_activation_hook( __FILE__, array( $this, 'create_table' ) );

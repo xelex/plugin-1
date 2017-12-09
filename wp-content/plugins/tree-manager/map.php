@@ -17,6 +17,9 @@
         case 'approved':
             $points = ac_tree_manager_map_data_approved($area[0], $area[1], $area[2], $area[3]);
             break;
+        case 'denied':
+            $points = ac_tree_manager_map_data_denied($area[0], $area[1], $area[2], $area[3]);
+            break;
         case 'unapproved':
             $points = ac_tree_manager_map_data_unapproved($area[0], $area[1], $area[2], $area[3]);
             break;
@@ -30,7 +33,11 @@
             $points = ac_tree_manager_map_data_for_plantator($filter_id);
             break;
         case 'all':
-            $points = ac_tree_manager_map_data($area[0], $area[1], $area[2], $area[3]);                
+            if ($filter_id > 0) {
+                $points = ac_tree_manager_map_data_for_tree($filter_id);
+            } else {
+                $points = ac_tree_manager_map_data($area[0], $area[1], $area[2], $area[3]);
+            }                
             break;
         default:
             if ($filter_id > 0) {
@@ -42,14 +49,23 @@
     }
 
     function get_icon($item) {
+        $tmp = intval($item->icon);
+
         if ($item->amount <=  0) {
-            if (intval($point->icon) == 0) {
+            if ($tmp == 0) {
                 return "/wp-content/plugins/tree-manager/img/icon_0.svg";
             } else {
                 return "/wp-content/plugins/tree-manager/img/icon_1.svg";
             }
+        } else {
+            if ($tmp == 0) {
+                return "/wp-content/plugins/tree-manager/img/icon_10.svg";
+            } else {
+                return "/wp-content/plugins/tree-manager/img/icon_11.svg";
+            }
         }
-        return "/wp-content/plugins/tree-manager/img/icon_all.svg";
+
+        return "/wp-content/plugins/tree-manager/img/icon_00.svg";
     }
 ?>
 <?php echo $callback; ?>({

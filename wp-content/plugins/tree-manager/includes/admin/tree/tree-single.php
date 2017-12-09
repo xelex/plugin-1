@@ -1,6 +1,11 @@
 <?php
     $filter = $_REQUEST['filter'];
     $filter_id = $_REQUEST['filter_id'];
+    $id = $_REQUEST['id'];
+    if (strlen($filter) == 0) {
+        $filter = 'all';
+    }
+
     if ($id > 0) {
         $filter = 'all';
         $filter_id = $id;
@@ -28,6 +33,9 @@
                 break;
             case 'unapproved':
                 _e( 'Просмотр непроверенных посадок', 'vbh' );
+                break;
+            case 'denied':
+                _e( 'Просмотр отклоненных посадок', 'vbh' );
                 break;
             case 'all':
             default:

@@ -11,6 +11,7 @@
                 <tr class="row-lat">
                     <th scope="row">
                         <label for="lat"><?php _e( 'Место посадки', 'vbh' ); ?></label>
+                        <?php required(); ?>
                     </th>
                     <td>
                     <p>
@@ -23,22 +24,13 @@
                     <p>
                     </td>
                 </tr>
-                <tr class="row-approved">
-                    <th scope="row">
-                        <label for="approved"><?php _e( 'Проверено', 'vbh' ); ?></label>
-                    </th>
-                    <td>
-                        <label for="approved">
-                            <input name="approved" type="checkbox" id="approved" value="1">
-                        </label>
-                    </td>
-                </tr>
                 <tr class="row-action_id">
                     <th scope="row">
                         <label for="type_id"><?php _e( 'Акция', 'vbh' ); ?></label>
+                        <?php required(); ?>
                     </th>
                     <td>
-                        <select name="action_id" class="regular-text">
+                        <select name="action_id" class="regular-text" required=true>
                             <?php echo ac_activities_selector($item->action_id); ?>
                         </select>
                     </td>
@@ -46,9 +38,10 @@
                 <tr class="row-type_is">
                     <th scope="row">
                         <label for="type_id"><?php _e( 'Порода дерева', 'vbh' ); ?></label>
+                        <?php required(); ?>
                     </th>
                     <td>
-                        <select name="type_id" class="regular-text">
+                        <select name="type_id" class="regular-text" required=true>
                             <?php echo ac_types_selector($item->type_id); ?>
                         </select>
                     </td>
@@ -64,6 +57,7 @@
             </tbody>
         </table>
 
+        <input name="approved" type="hidden" id="approved" value="1" />
         <input type="hidden" name="field_id" value="<?php echo $item->id; ?>">
 
         <?php wp_nonce_field( 'ac_new_tree' ); ?>

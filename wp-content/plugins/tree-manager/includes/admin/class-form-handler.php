@@ -13,7 +13,7 @@ class Form_Handler {
     public function __construct() {
         $hooks = array(
             'handle_types_form_submit', 'handle_types_bulk_action',
-            'handle_trees_form_submit', 'handle_treegroups_form_submit','handle_trees_bulk_action',
+            'handle_trees_form_submit', 'handle_treegroups_form_submit', 'handle_trees_form_allow', 'handle_trees_bulk_action',
             'handle_plantators_form_submit', 'handle_plantators_bulk_action',
             'handle_activities_form_submit', 'handle_activities_bulk_action',
             'handle_qrgen');
@@ -83,6 +83,45 @@ class Form_Handler {
         // Redirect
         wp_redirect( $redirect_to );
         exit;
+    }
+
+    /**
+     * Handles form data when submitted.
+     *
+     * @return void
+     */
+    public function handle_trees_form_allow() {
+        $is_allow = isset( $_POST['allow_tree'] );
+        $is_disallow = isset( $_POST['disallow_tree'] );
+        
+        if ( !$is_allow && !$is_disallow ) {
+            return;
+        }
+
+        if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'ac_approve_tree' ) ) {
+            return;
+        }
+
+        if ( ! current_user_can( 'read' ) ) {
+            wp_die( __( 'Permission Denied!', 'vbh' ) );
+        }
+
+        $errors   = array();
+        $page_url = menu_page_url( 'tree-manager-trees', false );
+        $id = intval(isset( $_POST['field_id'] ) ? absint( $_POST['field_id'] ) : 0);
+
+        if ($is_allow) {
+            ac_allow_tree( $id );
+        }
+
+        if ($is_disallow) {
+            ac_disallow_tree( $id );
+        }
+
+        // Redirect
+        $redirect_to = add_query_arg( array( 'message' => 'success' ), $page_url );
+        wp_redirect( $redirect_to );
+        exit;        
     }
 
     /**
@@ -346,6 +385,24 @@ class Form_Handler {
     }
 
     public function handle_trees_bulk_action() {
+        if ($this->check('action', 'bulk-allow') || $this->check('action2', 'bulk-allow')) {
+            if ( ! wp_verify_nonce( esc_attr( $_REQUEST['_wpnonce'] ), 'bulk-trees' ) ) {
+                return;
+            }
+
+            // loop over the array of record ids and delete them
+            $delete_ids = esc_sql( $_REQUEST['bulk-delete'] );
+            foreach ( $delete_ids as $id ) {
+                call_user_func( 'ac_allow_tree', $id );
+            }
+
+            $page_url = menu_page_url( $page, false );
+            $query = array( 'message' => 'allowed');
+            $redirect_to = add_query_arg( $query, $page_url );
+            //wp_redirect( $redirect_to );
+            //exit;
+        }
+
         $this->handle_bulk_action('tree-manager-trees', 'ac_delete_tree', 'ac_delete_tree', 'trees');
     }
 

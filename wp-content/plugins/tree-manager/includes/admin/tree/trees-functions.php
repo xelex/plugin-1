@@ -15,6 +15,39 @@ function ac_get_tree( $id = 0 ) {
 }
 
 /**
+ * Retrieve tree stats.
+ *
+ * @return object
+ */
+function ac_get_tree_total( ) {
+    global $wpdb;
+
+    return $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}trees" );
+}
+
+/**
+ * Retrieve tree stats (approved).
+ *
+ * @return object
+ */
+function ac_get_tree_total_unapproved( ) {
+    global $wpdb;
+
+    return $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}trees WHERE approved = 0" );
+}
+
+/**
+ * Retrieve tree stats (approved).
+ *
+ * @return object
+ */
+function ac_get_tree_total_denied( ) {
+    global $wpdb;
+
+    return $wpdb->get_var( "SELECT count(*) FROM {$wpdb->prefix}trees WHERE approved = -1" );
+}
+
+/**
  * Retrieve trees data from the database.
  *
  * @param int $per_page
@@ -50,11 +83,14 @@ function ac_get_trees( $args = null ) {
 
     if (! empty( $args['filter'] ) ) {
         switch($args['filter']) {
+            case 'denied':
+                array_push($filters, ' approved = -1');
+                break;
             case 'unapproved':
-                array_push($filters, ' approved = 0 ');
+                array_push($filters, ' approved NOT IN (1, -1) ');
                 break;
             case 'approved':
-                array_push($filters, ' NOT approved = 0 ');
+                array_push($filters, ' approved = 1 ');
                 break;
             case 'all':
             default:
@@ -123,6 +159,53 @@ function ac_delete_tree( $id ) {
         [ 'id' => $id ],
         [ '%d' ]
     );
+}
+
+/**
+ * Allow a tree record.
+ *
+ * @param  int $id tree id
+ *
+ * @return boolean
+ */
+function ac_allow_tree( $id ) {
+    global $wpdb;
+
+    return $wpdb->update(
+        "{$wpdb->prefix}trees",
+        array( 'approved' => 1 ),
+        array( 'id' => $id )
+    );
+}
+
+/**
+ * Disallow tree record.
+ *
+ * @param  int $id tree id
+ *
+ * @return boolean
+ */
+function ac_disallow_tree( $id ) {
+    global $wpdb;
+
+    return $wpdb->update(
+        "{$wpdb->prefix}trees",
+        array( 'approved' => -1 ),
+        array( 'id' => $id )
+    );
+}
+
+/**
+ * Set tree 'in progress'.
+ *
+ * @param  int $id tree id
+ *
+ * @return boolean
+ */
+function ac_set_tree_in_progress( $id ) {
+    global $wpdb;
+
+    return $wpdb->query($wpdb->prepare( "UPDATE {$wpdb->prefix}trees SET approved = 2 WHERE id = %d AND approved = 0", intval($id) ));
 }
 
 /**

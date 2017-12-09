@@ -44,7 +44,6 @@ class Trees_List_Table extends WP_List_Table {
             case 'lat':
             case 'lng':
             case 'url':
-            case 'planted':
             case 'amount':
             case 'last':
                 return $item->{$column_name};
@@ -61,13 +60,21 @@ class Trees_List_Table extends WP_List_Table {
                     'view',
                     absint( $item->type_id ));
             case 'approved':
-                return $item->approved ? 'Да' : 'Нет';
+                if ($item->approved == -1)
+                    return 'Отклонен';
+                if ($item->approved == 1)
+                    return 'Да';
+                if ($item->approved == 2)
+                    return 'В процессе';
+                return 'Нет';
             case 'owner_id':
                 if ($item->amount > 0) {
                     return 'Группа из '.$item->amount;
                 } else {
                     return $item->{$column_name};
                 }
+            case 'planted':
+                return strlen($item->planted) > 0 ? explode(' ', $item->planted)[0] : '';
             default:
                 return print_r( $item, true );
         }
@@ -98,13 +105,12 @@ class Trees_List_Table extends WP_List_Table {
 
         $title = '<strong>' . $item->id . '</strong>';
 
-        $actions = [];
-        $actions['edit'] = sprintf( '<a href="?page=%s&action=%s&id=%d">Редактировать</a>',  esc_attr( $_REQUEST['page'] ), 'edit', absint( $item->id ) );
-        if (intval($item->approved) != 1) {
-            $actions['approve'] = sprintf( '<a href="?page=%s&action=%s&id=%d">Резрешить</a>',  esc_attr( $_REQUEST['page'] ), 'approve', absint( $item->id ) );
-        }
-        $actions['delete'] = sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s" onclick="return confirm(\'Вы уверены ?\');">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce );
-        return sprintf( '<a href="?page=%s&action=%s&id=%d">%s</a>',  esc_attr( $_REQUEST['page'] ), 'view', absint( $item->id ), $title ) . $this->row_actions( $actions );
+        $actions = [
+            'edit' => sprintf( '<a href="?page=%s&action=%s&id=%d">Редактировать</a>',  esc_attr( $_REQUEST['page'] ), 'edit', absint( $item->id ) ),
+            'view' => sprintf( '<a href="?page=%s&action=%s&id=%d">На карте</a>',  esc_attr( $_REQUEST['page'] ), 'view', absint( $item->id ) ),
+            'delete' => sprintf( '<a href="?page=%s&action=%s&id=%d&_wpnonce=%s" onclick="return confirm(\'Вы уверены ?\');">Удалить</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item->id ), $delete_nonce )
+        ];
+        return sprintf( '<a href="?page=%s&action=%s&id=%d">%s</a>',  esc_attr( $_REQUEST['page'] ), 'approve', absint( $item->id ), $title ) . $this->row_actions( $actions );
     }
 
     /**
@@ -115,7 +121,7 @@ class Trees_List_Table extends WP_List_Table {
     function get_columns() {
         $columns = [
             'cb' => '<input type="checkbox" />',
-            'id' => __( 'Номер', 'vbh' ),
+            'id' => __( 'Номер заявки', 'vbh' ),
             'approved' => __( 'Проверен', 'vbh' ),
             'action_id' => __( 'Акция', 'vbh' ),
             'owner_id' => __( 'Посадил', 'vbh' ),
@@ -161,7 +167,7 @@ class Trees_List_Table extends WP_List_Table {
     public function get_bulk_actions() {
         $actions = [
             'bulk-delete' => 'Удалить',
-//            'bulk-allow' => 'Резрешить'
+            'bulk-allow' => 'Резрешить'
         ];
 
         return $actions;
@@ -223,6 +229,10 @@ class Trees_List_Table extends WP_List_Table {
         $url = remove_query_arg('filter_id', add_query_arg('filter', 'approved'));
         $class = ($current == 'approved' ? ' class="current"' :'');
         $views['approved'] = "<a href='{$url}' {$class} >Проверенные</a>";
+
+        $url = remove_query_arg('filter_id', add_query_arg('filter', 'denied'));
+        $class = ($current == 'denied' ? ' class="current"' :'');
+        $views['denied'] = "<a href='{$url}' {$class} >Отклоненные</a>";
 
         return $views;
     }

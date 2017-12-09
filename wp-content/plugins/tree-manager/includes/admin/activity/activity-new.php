@@ -10,7 +10,7 @@
                 <tr class="row-name">
                     <th scope="row">
                         <label for="name"><?php _e( 'Название', 'vbh' ); ?></label>
-                        <br/><span style="font-size: 12px; font-weight: 400; font-style: italic; color: red;">Обязательное поле</span>
+                        <?php required(); ?>
                     </th>
                     <td>
                         <input type="text" name="name" id="name" class="regular-text" value="" required="required" />

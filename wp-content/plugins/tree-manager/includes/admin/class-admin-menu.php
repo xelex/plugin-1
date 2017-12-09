@@ -56,7 +56,7 @@ class Admin_Menu {
             'tree-manager-types',
             array( $this, 'plugin_page_types' )
         );
-
+/*
         add_submenu_page(
             'tree-manager',
             'Люди',
@@ -65,6 +65,7 @@ class Admin_Menu {
             'tree-manager-plantators',
             array( $this, 'plugin_page_plantators' )
         );
+*/
     }
 
     public function plugin_settings_page() {
@@ -162,6 +163,11 @@ class Admin_Menu {
 
             case 'group':
                 $template = dirname( __FILE__ ) . '/tree/tree-group.php';
+                break;
+
+            case 'approve':
+                ac_set_tree_in_progress( $id );
+                $template = dirname( __FILE__ ) . '/tree/tree-approve.php';
                 break;
 
             default:

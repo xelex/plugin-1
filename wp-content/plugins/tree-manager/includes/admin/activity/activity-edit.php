@@ -13,6 +13,7 @@
                 <tr class="row-name">
                     <th scope="row">
                         <label for="name"><?php _e( 'Название', 'vbh' ); ?></label>
+                        <?php required(); ?>
                     </th>
                     <td>
                         <input type="text" name="name" id="name" class="regular-text" value="<?php echo esc_attr( $item->name ); ?>" required="required" />

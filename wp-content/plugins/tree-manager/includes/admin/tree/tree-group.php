@@ -9,6 +9,7 @@
                 <tr class="row-lat">
                     <th scope="row">
                         <label for="lat"><?php _e( 'Место посадки', 'vbh' ); ?></label>
+                        <?php required(); ?>
                     </th>
                     <td>
                     <p>
@@ -27,16 +28,17 @@
                     </th>
                     <td>
                         <label for="approved">
-                            <input name="approved" type="checkbox" id="approved" value="1">
+                            <input name="approved" type="checkbox" id="approved" value="1" checked=true disabled=true>
                         </label>
                     </td>
                 </tr>
                 <tr class="row-action_id">
                     <th scope="row">
                         <label for="type_id"><?php _e( 'Акция', 'vbh' ); ?></label>
+                        <?php required(); ?>
                     </th>
                     <td>
-                        <select name="action_id" class="regular-text">
+                        <select name="action_id" class="regular-text" required=true>
                             <?php echo ac_activities_selector(); ?>
                         </select>
                     </td>
@@ -44,9 +46,10 @@
                 <tr class="row-type_is">
                     <th scope="row">
                         <label for="type_id"><?php _e( 'Порода дерева', 'vbh' ); ?></label>
+                        <?php required(); ?>
                     </th>
                     <td>
-                        <select name="type_id" class="regular-text">
+                        <select name="type_id" class="regular-text" required=true>
                             <?php echo ac_types_selector(); ?>
                         </select>
                     </td>
@@ -62,9 +65,10 @@
                 <tr class="row-amount">
                     <th scope="row">
                         <label for="amount"><?php _e( 'Количество', 'vbh' ); ?></label>
+                        <?php required(); ?>
                     </th>
                     <td>
-                        <input type="number" name="amount" id="amount" class="regular-text" min=1 max=10000 value="1"  />
+                        <input type="number" name="amount" id="amount" class="regular-text" min=1 value="1" required=true />
                     </td>
                 </tr>
                 <tr class="row-description">
@@ -81,7 +85,7 @@
         <input type="hidden" name="field_id" value="0">
 
         <?php wp_nonce_field( 'ac_new_treegroup' ); ?>
-        <?php submit_button( __( 'Обновить', 'vbh' ), 'primary', 'submit_treegroup' ); ?>
+        <?php submit_button( __( 'Добавить группу', 'vbh' ), 'primary', 'submit_treegroup' ); ?>
 
     </form>
 </div>

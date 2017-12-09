@@ -8,12 +8,25 @@
     ymaps.ready(function(){
         jQuery('#yandex_map').html('');        
         geo_map = new ymaps.Map("yandex_map", {
-            center: [55.76, 37.64],
-            zoom: 9,
+            center: [55.00, 56.00],
+            zoom: 5,
             type: 'yandex#map',
             controls: []
         }, {
             searchControlProvider: 'yandex#search'
+        });
+
+        var typeSelector = new ymaps.control.TypeSelector({
+            options: {
+                layout: 'round#listBoxLayout',
+                itemLayout: 'round#listBoxItemLayout',
+                itemSelectableLayout: 'round#listBoxItemSelectableLayout',
+                float: 'none',
+                position: {
+                    bottom: '40px',
+                    left: '10px'
+                }
+            }
         });
 
         var zoomControl = new ymaps.control.ZoomControl({
@@ -38,6 +51,7 @@
 
         geo_map.controls.add(zoomControl);
         geo_map.controls.add(geolocationControl);
+        geo_map.controls.add(typeSelector);
 
         var objectManager = new ymaps.LoadingObjectManager('<?php echo $geo_url; ?>', {
             clusterize: true,
@@ -64,7 +78,24 @@
             iconImageOffset: [-21, -21]
         });
 
-        geo_map.geoObjects.add(objectManager);        
+        objectManager.objects.events.add('click', function (e) {
+            var id = e.get('objectId');
+            var obj = objectManager.objects.getById(objectId);
+
+            console.log(id);
+            console.log(obj);
+            
+            if (hasBalloonData(objectId)) {
+                objectManager.objects.balloon.open(objectId);
+            } else {
+                obj.properties.balloonContent = "Идет загрузка данных...";
+                objectManager.objects.balloon.open(objectId);
+                loadBalloonData(objectId).then(function (data) {
+                    obj.properties.balloonContent = data;
+                    objectManager.objects.balloon.setData(obj);
+                });
+            }
+        });  
     });
 </script>
 <?php

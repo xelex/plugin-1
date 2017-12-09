@@ -67,7 +67,7 @@ class Activities_List_Table extends WP_List_Table {
      * Renderer for planted cells
      */
     public function column_planted($item) {
-        return sprintf( '<a href="?page=%s&filter=%s&filter_id=%d">'.($item->planted).'</a>',  'tree-manager-trees', 'action', absint( $item->id ));
+        return sprintf( '<a href="?page=%s&filter=%s&filter_id=%d">'.intval($item->planted).'</a>',  'tree-manager-trees', 'action', absint( $item->id ));
     }
 
     /**

@@ -24,6 +24,9 @@
                 case 'unapproved':
                     _e( 'Просмотр непроверенных посадок', 'vbh' );
                     break;
+                case 'denied':
+                    _e( 'Просмотр отклоненных посадок', 'vbh' );
+                    break;
                 case 'all':
                 default:
                     _e( 'Все посадки', 'vbh' );
