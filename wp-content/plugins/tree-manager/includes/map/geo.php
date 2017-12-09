@@ -1,8 +1,16 @@
 <?php
     $geo_url = url_simplify(plugin_dir_url( __FILE__).'/../../map.php?filter='.$filter.'&filter_id='.$filter_id.'&area=%b');
-    $icon_cluster = ag_get_type_icon();
 ?>
 <script type="text/javascript">
+    var icons = {
+        '0': '<?php echo ag_get_type_icon(0) ?>',
+        '1': '<?php echo ag_get_type_icon(1) ?>',
+        '10': '<?php echo ag_get_type_icon(10) ?>',
+        '11': '<?php echo ag_get_type_icon(11) ?>',
+        '00': '<?php echo ag_get_type_icon("00") ?>',
+        'cluster': '<?php echo ag_get_type_icon() ?>',
+    };
+
     var geo_map;
     var gl;
     ymaps.ready(function(){
@@ -58,45 +66,85 @@
             clusterHasBaloon: false,
             clusterNumbers: [10, 100, 1000],
             clusterIcons: [{
-                    href: '<?php echo $icon_cluster; ?>',
+                    href: icons['cluster'],
                     size: [42, 42],
                     offset: [-21, -21]
                 }, {
-                    href: '<?php echo $icon_cluster; ?>',
+                    href: icons['cluster'],
                     size: [54, 54],
                     offset: [-27, -27]
                 }, {
-                    href: '<?php echo $icon_cluster; ?>',
+                    href: icons['cluster'],
                     size: [66, 66],
                     offset: [-33, -33]
-                }
-            ]
+                }]
         });
-        objectManager.objects.options.set( {
-            iconLayout: 'default#image',
-            iconImageSize: [42, 42],
-            iconImageOffset: [-21, -21]
+        objectManager.objects.options.set({
+            iconLayout: 'default#image'
+        });
+
+        objectManager.events.add('propertieschange', function (e) {
+            console.log(e);
         });
 
         objectManager.objects.events.add('click', function (e) {
             var id = e.get('objectId');
-            var obj = objectManager.objects.getById(objectId);
-
-            console.log(id);
-            console.log(obj);
-            
-            if (hasBalloonData(objectId)) {
-                objectManager.objects.balloon.open(objectId);
-            } else {
-                obj.properties.balloonContent = "Идет загрузка данных...";
-                objectManager.objects.balloon.open(objectId);
-                loadBalloonData(objectId).then(function (data) {
-                    obj.properties.balloonContent = data;
-                    objectManager.objects.balloon.setData(obj);
-                });
-            }
+            loadBalloonData(id).then(function(data) {
+                console.log(data);
+            });
         });  
+
+        geo_map.geoObjects.add(objectManager);
     });
+
+    function customScale(name, size) {
+        if (size === undefined || size <= 10) {
+            return {
+                iconImageHref: icons[name],
+                iconImageSize: [42, 42],
+                iconImageOffset: [-21, -21]
+            };
+        }
+        if (size <= 100) {
+            return {
+                iconImageHref: icons[name],
+                iconImageSize: [56, 56],
+                iconImageOffset: [-28, -28]
+            };
+        }
+        return {
+            iconImageHref: icons[name],
+            iconImageSize: [66, 66],
+            iconImageOffset: [-33, -33]
+        };
+    }
+
+    function customPreprocessor(raw) {
+        if (raw.error != null) {
+            return raw;
+        }
+
+        raw.data.features = jQuery.map(raw.data.f, function(r) {
+            return {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: r.c
+                },
+                id: r.i,
+                options: customScale((r.a > 0 ? '1' : '') + (r.t == 0 ? '0': '1'), r.a)
+            }
+        });
+
+        delete raw.data.f;
+
+        console.log(raw);
+        return raw;
+    }
+
+    function loadBalloonData(id) {
+
+    }
 </script>
 <?php
 function geo_container() {

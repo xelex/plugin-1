@@ -68,27 +68,18 @@
         return "/wp-content/plugins/tree-manager/img/icon_00.svg";
     }
 ?>
-<?php echo $callback; ?>({
-    error: null,
-    data: {
-        type: 'FeatureCollection',
-        features: [
-        <?php foreach($points as $point) {?>
-            {
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [<?php echo $point->lat; ?>, <?php echo $point->lng; ?>]
-                },
-                id: <?php echo $point->id ?>,
-                properties: {
-                    balloonContent: '<?php echo $point->id ?>'
-                },
-                options: {
-                    iconImageHref: '<?php echo get_icon($point); ?>'
-                }
-            },
-        <?php } ?>
-        ]
-    }
-});
+<?php echo $callback; ?>(customPreprocessor({
+error: null,
+data: {
+type: 'FeatureCollection',
+f: [
+<?php foreach($points as $point) {
+?>
+{i:<?php echo $point->id ?>,c:[<?php echo $point->lat; ?>,<?php echo $point->lng; ?>],t:<?php echo $point->icon; 
+echo $point->amount > 0 ? ',a:'.$point->amount : ''; ?>},
+<?php
+}
+?>
+]
+}
+}));
